@@ -1,0 +1,293 @@
+/* Custom scrollbar for messages container */
+.messages-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) rgba(0, 0, 0, 0);
+}
+
+.messages-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0);
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Typing indicator */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #a0a0a0;
+  animation: bounce 1.5s infinite;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* Message input focus states */
+.message-input:focus {
+  border-color: rgba(74, 202, 128, 0.5);
+  box-shadow: 0 0 0 2px rgba(74, 202, 128, 0.2);
+}
+
+/* Send button focus states */
+.send-button:focus {
+  outline: 2px solid rgba(74, 202, 128, 0.5);
+  outline-offset: 2px;
+}
+
+/* Enhanced message styling */
+.message-bubble.agent {
+  background: rgba(40, 40, 45, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-top-left-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.message-bubble.user {
+  background: rgba(60, 60, 70, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-top-right-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Message bubble hover effects */
+.message-bubble:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.message-bubble.agent:hover {
+  background: rgba(45, 45, 50, 0.9);
+}
+
+.message-bubble.user:hover {
+  background: rgba(65, 65, 75, 0.9);
+}
+
+/* Input form enhancements */
+.message-input-form {
+  display: flex;
+  padding: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 8px;
+  background: rgba(25, 25, 30, 0.7);
+  border-radius: 0 0 12px 12px;
+}
+
+.message-input {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(30, 30, 35, 0.8);
+  color: #e0e0e0;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.message-input:focus {
+  border-color: rgba(74, 202, 128, 0.5);
+}
+
+/* Send button enhancements */
+.send-button {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(74, 202, 128, 0.3);
+  min-width: 60px;
+}
+
+.send-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 202, 128, 0.4);
+}
+
+.send-button:active {
+  transform: translateY(0);
+}
+
+/* Focus styles for accessibility */
+.message-input:focus {
+  box-shadow: 0 0 0 2px rgba(74, 202, 128, 0.3);
+}
+
+.send-button:focus {
+  outline: 2px solid rgba(74, 202, 128, 0.5);
+  outline-offset: 2px;
+}
+
+/* Quick reply chips container */
+.quick-reply-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  padding: 8px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.quick-reply-chip {
+  padding: 6px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(30, 30, 35, 0.5);
+  color: #a0a0a0;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.quick-reply-chip:hover {
+  background: rgba(50, 50, 55, 0.7);
+  color: #e0e0e0;
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.quick-reply-chip:active {
+  transform: translateY(0);
+}
+
+/* Focus styles for accessibility */
+.quick-reply-chip:focus {
+  outline: 2px solid rgba(74, 202, 128, 0.5);
+  outline-offset: 2px;
+}
+
+/* Enhanced message input focus states */
+.message-input:focus {
+  border-color: rgba(74, 202, 128, 0.5);
+  box-shadow: 0 0 0 2px rgba(74, 202, 128, 0.2);
+}
+
+/* Send button focus states */
+.send-button:focus {
+  outline: 2px solid rgba(74, 202, 128, 0.5);
+  outline-offset: 2px;
+}
+
+/* Enhanced message styling */
+.message-bubble.agent {
+  background: rgba(40, 40, 45, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-top-left-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.message-bubble.user {
+  background: rgba(60, 60, 70, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-top-right-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Message bubble hover effects */
+.message-bubble:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.message-bubble.agent:hover {
+  background: rgba(45, 45, 50, 0.9);
+}
+
+.message-bubble.user:hover {
+  background: rgba(65, 65, 75, 0.9);
+}
+
+/* Input form enhancements */
+.message-input-form {
+  display: flex;
+  padding: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 8px;
+  background: rgba(25, 25, 30, 0.7);
+  border-radius: 0 0 12px 12px;
+}
+
+.message-input {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(30, 30, 35, 0.8);
+  color: #e0e0e0;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.message-input:focus {
+  border-color: rgba(74, 202, 128, 0.5);
+}
+
+/* Send button enhancements */
+.send-button {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(74, 202, 128, 0.3);
+  min-width: 60px;
+}
+
+.send-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 202, 128, 0.4);
+}
+
+.send-button:active {
+  transform: translateY(0);
+}
+
+/* Focus styles for accessibility */
+.message-input:focus {
+  box-shadow: 0 0 0 2px rgba(74, 202, 128, 0.3);
+}
+
+.send-button:focus {
+  outline: 2px solid rgba(74, 202, 128, 0.5);
+  outline-offset: 2px;
+}

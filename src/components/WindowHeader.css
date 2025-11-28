@@ -1,0 +1,233 @@
+.window-header {
+  height: 40px;
+  background: rgba(30, 30, 35, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  position: relative;
+  z-index: 10;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.window-title {
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  color: #ffffff;
+}
+
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+}
+
+.environment-pill {
+  background: rgba(74, 202, 128, 0.2);
+  color: #4ade80;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.header-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 16px;
+}
+
+/* Toolbar button base styles */
+.toolbar-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.9);
+  color: #f9fafb;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.toolbar-button:hover {
+  background: rgba(30, 64, 175, 0.85);
+  border-color: rgba(129, 140, 248, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.5);
+}
+
+.toolbar-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Avatar button specific styles */
+.toolbar-button-avatar {
+  width: 34px;
+  height: 34px;
+  font-size: 12px;
+  font-weight: 600;
+  background: radial-gradient(circle at top left, #22c55e, #0f172a);
+}
+
+/* Ensure SVG icons inherit color properly */
+.toolbar-button svg {
+  color: inherit;
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+/* Ensure all toolbar buttons have proper SVG handling */
+.toolbar-button,
+.git-menu-button,
+.theme-toggle {
+  /* Ensure SVGs inside inherit colors properly */
+  color: inherit;
+}
+
+/* Focus styles for accessibility */
+.toolbar-button:focus {
+  outline: 2px solid rgba(74, 202, 128, 0.5);
+  outline-offset: 2px;
+}
+
+/* Traffic lights */
+.traffic-lights {
+  display: flex;
+  gap: 8px;
+  margin-right: 12px;
+}
+
+.traffic-light {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #ff5f56;
+}
+
+.traffic-light.yellow {
+  background-color: #ffbd2e;
+}
+
+.traffic-light.green {
+  background-color: #27c93f;
+}
+
+/* User menu */
+.user-menu-container {
+  position: relative;
+}
+
+.user-avatar {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  color: #ffffff;
+}
+
+.user-avatar:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.user-avatar:active {
+  transform: translateY(0);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.user-menu-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: rgba(30, 30, 35, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 8px 0;
+  min-width: 160px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  animation: fadeInDown 0.2s ease;
+  margin-top: 4px;
+}
+
+.user-menu-item {
+  width: 100%;
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  color: #e0e0e0;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-size: 14px;
+}
+
+.user-menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Animation for dropdown */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Responsive design for toolbar */
+@media (max-width: 768px) {
+  .header-toolbar {
+    gap: 6px;
+  }
+  
+  .toolbar-button {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .user-avatar {
+    width: 30px;
+    height: 30px;
+  }
+}
