@@ -73,7 +73,7 @@ const ChatPanel = () => {
     }, 20); // Speed of typing effect
   };
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (message.trim()) {
       const newMessage = {
@@ -85,22 +85,52 @@ const ChatPanel = () => {
       setMessages(prev => [...prev, newMessage]);
       setMessage('');
       
-      // Simulate agent response after a delay
+      // Convert UI messages to OpenAI format
+      const openAiMessages = messages.concat(newMessage).map(m => ({
+        role: m.sender === "user" ? "user" : "assistant",
+        content: m.text,
+      }));
+      
+      // Call backend API
       setIsTyping(true);
-      setTimeout(() => {
-        const agentResponse = {
-          id: messages.length + 2,
-          sender: 'agent',
-          text: "Thanks for your message. I'm processing your request now. This is a simulated streaming response that demonstrates how text would appear character by character in a real implementation.",
-          timestamp: 'Just now'
-        };
-        
-        // Start streaming the text
-        simulateTextStreaming(agentResponse.text, () => {
-          setMessages(prev => [...prev, agentResponse]);
-          setIsTyping(false);
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            projectId: null, // or use actual project ID if available
+            mode: "chat", // or use actual mode if available
+            usePremium: false, // or use actual premium setting if available
+            messages: openAiMessages
+          })
         });
-      }, 1000);
+        
+        if (!res.ok) {
+          console.error("Backend error:", res.status);
+          setIsTyping(false);
+          return;
+        }
+        
+        const data = await res.json();
+        
+        if (data && data.reply && data.reply.content) {
+          // Convert backend reply to UI message format
+          setMessages(prev => [
+            ...prev,
+            {
+              id: prev.length + 1,
+              sender: data.reply.role === "user" ? "user" : "agent",
+              text: data.reply.content,
+              timestamp: "Just now"
+            }
+          ]);
+        }
+      } catch (error) {
+        console.error("Error sending message:", error);
+        setIsTyping(false);
+      } finally {
+        setIsTyping(false);
+      }
     }
   };
 
@@ -110,40 +140,54 @@ const ChatPanel = () => {
   };
 
   return (
-    <div className="chat-panel" style={{ width: '100%' }}>
-      <div className="messages-container" style={{ maxHeight: 'calc(100% - 100px)', overflowY: 'auto', width: '100%' }}>
-        {messages.map((msg, index) => (
-          <div 
-            key={msg.id} 
-            className={`message-bubble ${msg.sender}`}
-            style={{ width: '100%' }}
-          >
-            <div className="message-content" style={{ width: '100%' }}>
-              <div className="message-text">{msg.text}</div>
-              <div className="message-timestamp">{msg.timestamp}</div>
-            </div>
-          </div>
-        ))}
-        {isTyping && (
-          <div className="message-bubble agent" style={{ width: '100%' }}>
-            <div className="message-content" style={{ width: '100%' }}>
-              <div className="message-text">
-                <span className="typing-indicator">
-                  <span className="typing-dot"></span>
-                  <span className="typing-dot"></span>
-                  <span className="typing-dot"></span>
-                </span>
+    <div className="chat-panel" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <div className="messages-container">
+        {messages.map((msg, index) => {
+          const isUser = msg.sender === "user";
+
+          if (isUser) {
+            // USER MESSAGE → keep bubble
+            return (
+              <div
+                key={msg.id}
+                className={`message-bubble user fade-in`}
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <div className="message-content">
+                  <div className="message-text">{msg.text}</div>
+                  <div className="message-timestamp">{msg.timestamp}</div>
+                </div>
+              </div>
+            );
+          }
+
+          // AGENT MESSAGE → plain text, NO bubble
+          return (
+            <div
+              key={msg.id}
+              className="agent-message-block fade-in"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <div className="agent-markdown">
+                {msg.text}
+              </div>
+              <div className="message-timestamp agent-timestamp">
+                {msg.timestamp}
               </div>
             </div>
-          </div>
-        )}
-        {streamingText && (
-          <div className="message-bubble agent" style={{ width: '100%' }}>
-            <div className="message-content" style={{ width: '100%' }}>
-              <div className="message-text">{streamingText}</div>
+          );
+        })}
+
+        {isTyping && (
+          <div className="agent-message-block fade-in thinking-block">
+            <div className="typing-indicator">
+              <span className="dot" />
+              <span className="dot" />
+              <span className="dot" />
             </div>
           </div>
         )}
+
         <div ref={messagesEndRef} />
       </div>
       

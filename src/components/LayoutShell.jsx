@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import WindowHeader from './WindowHeader';
 import TopTabs from './TopTabs';
 import ChatPanel from './ChatPanel';
-import ChangesPanel from './ChangesPanel';
 import AgentsSidebar from './AgentsSidebar';
 import TaskItem from './TaskItem';
-import { restoreActiveTab, persistActiveTab, restoreChangesFilter, persistChangesFilter } from '../utils/persistence';
+import { restoreActiveTab, persistActiveTab } from '../utils/persistence';
 import styles from './TaskQueue.module.css';
 import layoutStyles from './Layout.module.css';
 import { motion } from 'framer-motion';
@@ -13,7 +12,6 @@ import { motion } from 'framer-motion';
 const LayoutShell = () => {
   const [activeTab, setActiveTab] = useState(restoreActiveTab());
   const [showMobileNav, setShowMobileNav] = useState(false);
-  const [changesFilter, setChangesFilter] = useState(restoreChangesFilter());
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
 
@@ -21,11 +19,6 @@ const LayoutShell = () => {
   React.useEffect(() => {
     persistActiveTab(activeTab);
   }, [activeTab]);
-
-  // Persist changes filter
-  React.useEffect(() => {
-    persistChangesFilter(changesFilter);
-  }, [changesFilter]);
 
   // Mock task data for demonstration
   const mockTasks = [
@@ -107,7 +100,6 @@ const LayoutShell = () => {
                 <TopTabs activeTab={activeTab} setActiveTab={setActiveTab} />
               </div>
               <ChatPanel />
-              <ChangesPanel filter={changesFilter} setFilter={setChangesFilter} />
             </div>
           </div>
         </div>
@@ -199,17 +191,6 @@ const LayoutShell = () => {
             <path d="M12 8H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
           </svg>
           <span>Tasks</span>
-        </div>
-        <div 
-          className={`mobile-nav-item ${activeTab === 'changes' ? 'active' : ''}`}
-          onClick={() => setActiveTab('changes')}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2"/>
-            <path d="M12 16V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            <path d="M12 8H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-          </svg>
-          <span>Changes</span>
         </div>
       </div>
     </div>
