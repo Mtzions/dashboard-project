@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import ModelSelector, { MODEL_PRESETS } from "./ModelSelector";
 import './ChatPanel.css';
 
 // Define quick replies as a constant outside component to prevent recreation
@@ -9,7 +10,7 @@ const QUICK_REPLIES = [
   "Show recent changes"
 ];
 
-const ChatPanel = () => {
+const ChatPanel = ({ projectId }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([
     {
@@ -28,8 +29,9 @@ const ChatPanel = () => {
   
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
-  const [isTyping, setIsTyping] = useState(false);
-  const [streamingText, setStreamingText] = useState('');
+  const [isThinking, setIsThinking] = useState(false);
+  const [modelPreset, setModelPreset] = useState(MODEL_PRESETS[0]); // Default to gpt-5-mini
+  
   // Use the constant instead of useState for quick replies
   const quickReplies = QUICK_REPLIES;
 
@@ -42,7 +44,7 @@ const ChatPanel = () => {
     }, 100);
     
     return () => clearTimeout(timer);
-  }, [messages, streamingText]);
+  }, [messages]);
 
   // Handle keyboard shortcuts
   useEffect(() => {
@@ -58,49 +60,67 @@ const ChatPanel = () => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const simulateTextStreaming = (text, callback) => {
-    let index = 0;
-    setStreamingText('');
-    
-    const interval = setInterval(() => {
-      if (index < text.length) {
-        setStreamingText(prev => prev + text.charAt(index));
-        index++;
-      } else {
-        clearInterval(interval);
-        callback();
-      }
-    }, 20); // Speed of typing effect
-  };
-
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (message.trim()) {
-      const newMessage = {
-        id: messages.length + 1,
-        sender: 'user',
-        text: message,
-        timestamp: 'Just now'
-      };
-      setMessages(prev => [...prev, newMessage]);
-      setMessage('');
+      const trimmed = message.trim();
       
-      // Simulate agent response after a delay
-      setIsTyping(true);
-      setTimeout(() => {
-        const agentResponse = {
-          id: messages.length + 2,
-          sender: 'agent',
-          text: "Thanks for your message. I'm processing your request now. This is a simulated streaming response that demonstrates how text would appear character by character in a real implementation.",
+      // 1) append user message locally
+      const newMessages = [
+        ...messages,
+        {
+          id: messages.length + 1,
+          sender: 'user',
+          text: trimmed,
           timestamp: 'Just now'
-        };
-        
-        // Start streaming the text
-        simulateTextStreaming(agentResponse.text, () => {
-          setMessages(prev => [...prev, agentResponse]);
-          setIsTyping(false);
+        }
+      ];
+      setMessages(newMessages);
+      setMessage('');
+      setIsThinking(true);
+
+      try {
+        // 2) call backend - Updated to use environment variable for backend URL
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3001";
+        const res = await fetch(`${backendUrl}/api/chat`, {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            // Add any required authentication headers here
+            // "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            projectId: projectId || null,
+            mode: modelPreset.mode,           // "chat" or "plan"
+            usePremium: modelPreset.usePremium,
+            messages: newMessages,
+          }),
         });
-      }, 1000);
+
+        const data = await res.json();
+
+        if (data && data.reply && data.reply.text) {
+          // 3) append assistant reply
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: prev.length + 1,
+              sender: data.reply.role || "agent",
+              text: data.reply.text,
+              timestamp: 'Just now'
+            }
+          ]);
+        } else {
+          // Optional: push an error-style bubble in chat
+          console.warn("No reply content from /api/chat", data);
+        }
+      } catch (err) {
+        console.error("Error calling /api/chat:", err);
+        // Optional: show an error bubble in the chat UI
+        // For now, we'll just log the error
+      } finally {
+        setIsThinking(false);
+      }
     }
   };
 
@@ -111,11 +131,22 @@ const ChatPanel = () => {
 
   return (
     <div className="chat-panel">
+      {/* HEADER ROW: title + model selector */}
+      <div className="chat-panel-header">
+        <div className="chat-panel-title">
+          Chat Agent Chat
+        </div>
+        <ModelSelector
+          selectedId={modelPreset.id}
+          onChange={setModelPreset}
+        />
+      </div>
+      
       <div className="messages-container" style={{ maxHeight: 'calc(100% - 100px)', overflowY: 'auto' }}>
         {messages.map((msg, index) => (
           <div 
             key={msg.id} 
-            className={`message-bubble ${msg.sender} fade-in-up`}
+            className={`message-bubble ${msg.sender} fade-in`}
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             <div className="message-content">
@@ -124,23 +155,17 @@ const ChatPanel = () => {
             </div>
           </div>
         ))}
-        {isTyping && (
-          <div className="message-bubble agent fade-in-up">
+        {isThinking && (
+          <div className="message-bubble agent">
             <div className="message-content">
               <div className="message-text">
-                <span className="typing-indicator">
-                  <span className="typing-dot"></span>
-                  <span className="typing-dot"></span>
-                  <span className="typing-dot"></span>
-                </span>
+                Planner is thinking…
               </div>
-            </div>
-          </div>
-        )}
-        {streamingText && (
-          <div className="message-bubble agent fade-in-up">
-            <div className="message-content">
-              <div className="message-text">{streamingText}</div>
+              <div className="typing-indicator">
+                <span className="dot" />
+                <span className="dot" />
+                <span className="dot" />
+              </div>
             </div>
           </div>
         )}
@@ -175,7 +200,9 @@ const ChatPanel = () => {
             }
           }}
         />
-        <button type="submit" className="send-button">Send</button>
+        <button type="submit" className="send-button" disabled={isThinking}>
+          Send
+        </button>
       </form>
     </div>
   );

@@ -1,28 +1,82 @@
-# React + Vite
+# Dashboard UI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern dashboard interface built with React and Vite.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Real-time chat interface with AI agent integration
+- Task management and visualization
+- Git integration and change tracking
+- Responsive design with dark/light theme support
+- Component-based architecture
 
-## React Compiler
+## Project Structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```
+src/
+├── components/     # Reusable UI components
+├── utils/         # Utility functions and helpers
+├── styles/        # Global styles and CSS
+└── App.jsx        # Main application component
+```
 
-## Development Server
+## Development
 
-To run the development server locally:
+### Prerequisites
+
+- Node.js (v16 or higher)
+- npm (v8 or higher)
+
+### Installation
+
+```bash
+npm install
+```
+
+### Running the Development Server
+
 ```bash
 npm run dev
 ```
 
-To run the development server and make it accessible externally (bring online):
-```bash
-npm run dev:host
+The development server will start at `http://localhost:5173`
+
+### Environment Variables
+
+Create a `.env` file in the root directory to configure environment-specific settings:
+
+```env
+# Backend API URL
+VITE_BACKEND_URL=http://localhost:3001
 ```
 
-## Expanding the ESLint configuration
+### Building for Production
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm run build
+```
+
+This will create a `dist` folder with the optimized production build.
+
+## Backend Integration
+
+This frontend is designed to work with a backend server that provides chat functionality via the `/api/chat` endpoint. The backend should be running on port 3001 by default, but this can be configured via the `VITE_BACKEND_URL` environment variable.
+
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run lint` - Run ESLint
+- `npm run preview` - Preview production build
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+
+MIT
