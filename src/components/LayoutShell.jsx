@@ -81,7 +81,7 @@ const LayoutShell = () => {
       <WindowHeader />
       
       <div className={layoutStyles.mainContainer}>
-        {/* Collapsible Task Queue Sidebar */}
+        {/* Collapsible Agents Sidebar */}
         <motion.div 
           className={`${layoutStyles.sidebarContainer} ${collapsed ? layoutStyles.sidebarCollapsed : layoutStyles.sidebarExpanded}`}
           animate={{ width: collapsed ? 40 : 280 }}
@@ -90,17 +90,7 @@ const LayoutShell = () => {
           {collapsed ? (
             <div className={layoutStyles.toggleButtonIcon}>◀</div>
           ) : (
-            <>
-              <h2 className={styles.panelTitle}>Task Queue</h2>
-              <div className={styles.taskList}>
-                {mockTasks.map((task, index) => (
-                  <div key={task.id}>
-                    {index > 0 && <div className={styles.taskSeparator}></div>}
-                    <TaskItem task={task} />
-                  </div>
-                ))}
-              </div>
-            </>
+            <AgentsSidebar onSidebarStateChange={setSidebarExpanded} />
           )}
         </motion.div>
 
@@ -118,7 +108,7 @@ const LayoutShell = () => {
           </div>
         </div>
 
-        {/* Collapsible AI Workflow Sidebar */}
+        {/* Collapsible Task Queue + AI Workflow Sidebars */}
         <motion.div 
           className={`${layoutStyles.sidebarContainer} ${collapsed ? layoutStyles.sidebarCollapsed : layoutStyles.sidebarExpanded}`}
           animate={{ width: collapsed ? 40 : 280 }}
@@ -128,7 +118,17 @@ const LayoutShell = () => {
             <div className={layoutStyles.toggleButtonIcon}>▶</div>
           ) : (
             <>
-              <h2 className="panel-title">AI Workflow</h2>
+              <h2 className={styles.panelTitle}>Task Queue</h2>
+              <div className={styles.taskList}>
+                {mockTasks.map((task, index) => (
+                  <div key={task.id}>
+                    {index > 0 && <div className={styles.taskSeparator}></div>}
+                    <TaskItem task={task} />
+                  </div>
+                ))}
+              </div>
+              
+              <h2 className="panel-title" style={{ marginTop: '16px' }}>AI Workflow</h2>
               <div className="workflow-description">
                 Recent workflow execution with automated steps
               </div>
