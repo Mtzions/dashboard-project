@@ -115,8 +115,7 @@ const ChatPanel = () => {
         {messages.map((msg, index) => (
           <div 
             key={msg.id} 
-            className={`message-bubble ${msg.sender} fade-in-up`}
-            style={{ animationDelay: `${index * 0.1}s` }}
+            className={`message-bubble ${msg.sender}`}
           >
             <div className="message-content">
               <div className="message-text">{msg.text}</div>
@@ -125,7 +124,7 @@ const ChatPanel = () => {
           </div>
         ))}
         {isTyping && (
-          <div className="message-bubble agent fade-in-up">
+          <div className="message-bubble agent">
             <div className="message-content">
               <div className="message-text">
                 <span className="typing-indicator">
@@ -138,7 +137,7 @@ const ChatPanel = () => {
           </div>
         )}
         {streamingText && (
-          <div className="message-bubble agent fade-in-up">
+          <div className="message-bubble agent">
             <div className="message-content">
               <div className="message-text">{streamingText}</div>
             </div>

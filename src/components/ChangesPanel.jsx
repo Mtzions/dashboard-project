@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import StatusPill from './StatusPill';
 import './ChangesPanel.css';
 
@@ -32,16 +32,6 @@ const ChangesPanel = ({ filter, setFilter }) => {
     // In a real app, this would show a diff view
   };
 
-  // Add animation class when filter changes
-  useEffect(() => {
-    const filterButtons = document.querySelectorAll('.filter-button');
-    filterButtons.forEach(button => {
-      button.classList.remove('filter-transition');
-      void button.offsetWidth; // Trigger reflow
-      button.classList.add('filter-transition');
-    });
-  }, [filter]);
-
   return (
     <div className="changes-panel">
       <h2 className="panel-title">Changes</h2>
@@ -60,7 +50,7 @@ const ChangesPanel = ({ filter, setFilter }) => {
         {filteredChanges.map(change => (
           <div 
             key={change.id} 
-            className="change-item fade-in-up"
+            className="change-item"
             onClick={() => handleFileClick(change.file)}
           >
             <div className="change-file-info">
