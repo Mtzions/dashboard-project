@@ -7,12 +7,15 @@ import AgentsSidebar from './AgentsSidebar';
 import TaskItem from './TaskItem';
 import { restoreActiveTab, persistActiveTab, restoreChangesFilter, persistChangesFilter } from '../utils/persistence';
 import styles from './TaskQueue.module.css';
+import layoutStyles from './Layout.module.css';
+import { motion } from 'framer-motion';
 
 const LayoutShell = () => {
   const [activeTab, setActiveTab] = useState(restoreActiveTab());
   const [showMobileNav, setShowMobileNav] = useState(false);
   const [changesFilter, setChangesFilter] = useState(restoreChangesFilter());
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
 
   // Persist active tab
   React.useEffect(() => {
@@ -69,74 +72,105 @@ const LayoutShell = () => {
     }
   ];
 
+  const toggleSidebar = () => {
+    setCollapsed(prev => !prev);
+  };
+
   return (
     <div className="dashboard-container">
       <WindowHeader />
       
-      <div className={`main-content ${sidebarExpanded ? 'sidebar-expanded' : 'sidebar-collapsed'}`}>
-        <AgentsSidebar onSidebarStateChange={setSidebarExpanded} />
-        <div className="center-column">
-          <TopTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-          <ChatPanel />
-          <ChangesPanel filter={changesFilter} setFilter={setChangesFilter} />
+      <div className={layoutStyles.mainContainer}>
+        {/* Collapsible Task Queue Sidebar */}
+        <motion.div 
+          className={`${layoutStyles.sidebarContainer} ${collapsed ? layoutStyles.sidebarCollapsed : layoutStyles.sidebarExpanded}`}
+          animate={{ width: collapsed ? 40 : 280 }}
+          transition={{ duration: 0.3 }}
+        >
+          {collapsed ? (
+            <div className={layoutStyles.toggleButtonIcon}>◀</div>
+          ) : (
+            <>
+              <h2 className={styles.panelTitle}>Task Queue</h2>
+              <div className={styles.taskList}>
+                {mockTasks.map((task, index) => (
+                  <div key={task.id}>
+                    {index > 0 && <div className={styles.taskSeparator}></div>}
+                    <TaskItem task={task} />
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </motion.div>
+
+        {/* Toggle Button */}
+        <div className={layoutStyles.toggleButton} onClick={toggleSidebar}>
+          <span className={layoutStyles.toggleButtonIcon}>{collapsed ? '▶' : '◀'}</span>
         </div>
-        
-        <div className="right-column">
-          <div className={styles.taskQueuePanel}>
-            <h2 className={styles.panelTitle}>Task Queue</h2>
-            <div className={styles.taskList}>
-              {mockTasks.map((task, index) => (
-                <div key={task.id}>
-                  {index > 0 && <div className={styles.taskSeparator}></div>}
-                  <TaskItem task={task} />
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          <div className="ai-workflow-panel">
-            <h2 className="panel-title">AI Workflow</h2>
-            <div className="workflow-description">
-              Recent workflow execution with automated steps
-            </div>
-            
-            <div className="workflow-git-info">
-              <div className="git-info-item">
-                <span className="git-label">Branch:</span>
-                <span className="git-value">feature/new-ui</span>
-              </div>
-              <div className="git-info-item">
-                <span className="git-label">Commit:</span>
-                <span className="git-value">Add new dashboard components</span>
-              </div>
-              <div className="git-info-item">
-                <span className="git-label">CI Status:</span>
-                <div className="ci-status">
-                  <span className="ci-text">✓ Passed</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="workflow-list">
-              <div className="workflow-item">
-                <div className="dot-indicator--completed"></div>
-                <div className="task-text">File analysis</div>
-              </div>
-              <div className="workflow-item">
-                <div className="dot-indicator--completed"></div>
-                <div className="task-text">Code generation</div>
-              </div>
-              <div className="workflow-item">
-                <div className="dot-indicator--in-progress"></div>
-                <div className="task-text">Testing</div>
-              </div>
-              <div className="workflow-item">
-                <div className="dot-indicator--pending"></div>
-                <div className="task-text">Deployment</div>
-              </div>
-            </div>
+
+        {/* Chat Component */}
+        <div className={layoutStyles.chatContainer}>
+          <div className="center-column">
+            <TopTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+            <ChatPanel />
+            <ChangesPanel filter={changesFilter} setFilter={setChangesFilter} />
           </div>
         </div>
+
+        {/* Collapsible AI Workflow Sidebar */}
+        <motion.div 
+          className={`${layoutStyles.sidebarContainer} ${collapsed ? layoutStyles.sidebarCollapsed : layoutStyles.sidebarExpanded}`}
+          animate={{ width: collapsed ? 40 : 280 }}
+          transition={{ duration: 0.3 }}
+        >
+          {collapsed ? (
+            <div className={layoutStyles.toggleButtonIcon}>▶</div>
+          ) : (
+            <>
+              <h2 className="panel-title">AI Workflow</h2>
+              <div className="workflow-description">
+                Recent workflow execution with automated steps
+              </div>
+              
+              <div className="workflow-git-info">
+                <div className="git-info-item">
+                  <span className="git-label">Branch:</span>
+                  <span className="git-value">feature/new-ui</span>
+                </div>
+                <div className="git-info-item">
+                  <span className="git-label">Commit:</span>
+                  <span className="git-value">Add new dashboard components</span>
+                </div>
+                <div className="git-info-item">
+                  <span className="git-label">CI Status:</span>
+                  <div className="ci-status">
+                    <span className="ci-text">✓ Passed</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="workflow-list">
+                <div className="workflow-item">
+                  <div className="dot-indicator--completed"></div>
+                  <div className="task-text">File analysis</div>
+                </div>
+                <div className="workflow-item">
+                  <div className="dot-indicator--completed"></div>
+                  <div className="task-text">Code generation</div>
+                </div>
+                <div className="workflow-item">
+                  <div className="dot-indicator--in-progress"></div>
+                  <div className="task-text">Testing</div>
+                </div>
+                <div className="workflow-item">
+                  <div className="dot-indicator--pending"></div>
+                  <div className="task-text">Deployment</div>
+                </div>
+              </div>
+            </>
+          )}
+        </motion.div>
       </div>
       
       {/* Mobile Navigation */}

@@ -1,0 +1,123 @@
+.mainContainer {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  padding: 16px;
+  gap: 16px;
+  width: 100vw;
+  box-sizing: border-box;
+}
+
+.sidebarContainer {
+  background: rgba(25, 25, 30, 0.7);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.sidebarCollapsed {
+  width: 40px !important;
+  padding: 0;
+  justify-content: center;
+}
+
+.sidebarExpanded {
+  width: 280px !important;
+  padding: 16px;
+}
+
+.toggleButton {
+  width: 24px;
+  height: 40px;
+  background: rgba(30, 30, 35, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0 4px;
+  transition: all 0.2s ease;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.toggleButton:hover {
+  background: rgba(40, 40, 45, 0.95);
+  transform: scale(1.05);
+}
+
+.toggleButtonIcon {
+  font-size: 16px;
+  color: #e0e0e0;
+  transition: transform 0.2s ease;
+}
+
+.sidebarCollapsed .toggleButtonIcon {
+  transform: rotate(180deg);
+}
+
+.chatContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: flex 0.3s ease;
+  min-width: 0;
+}
+
+.sidebarCollapsed .chatContainer {
+  flex: 1.5;
+}
+
+/* Ensure proper spacing and layout */
+.mainContent {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  padding: 16px;
+  gap: 16px;
+  width: 100vw;
+  box-sizing: border-box;
+}
+
+/* Responsive behavior */
+@media (max-width: 768px) {
+  .mainContainer {
+    flex-direction: column;
+    padding: 8px;
+    gap: 8px;
+  }
+  
+  .sidebarContainer {
+    width: 100% !important;
+    height: auto;
+    padding: 16px;
+  }
+  
+  .sidebarCollapsed {
+    width: 100% !important;
+    height: 40px;
+    padding: 0;
+    flex-direction: row;
+    justify-content: center;
+  }
+  
+  .chatContainer {
+    width: 100%;
+  }
+  
+  .toggleButton {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 100;
+  }
+}
