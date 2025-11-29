@@ -716,20 +716,10 @@ html, body {
   transform-origin: center;
 }
 
+.task-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   border-color: rgba(255, 255, 255, 0.15);
->>>>>>> 451a667 (Initial commit with current dashboard UI implementation)
-}
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  border-color: rgba(255, 255, 255, 0.15);
-}
-=======
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  border-color: rgba(255, 255, 255, 0.15);
->>>>>>> 451a667 (Initial commit with current dashboard UI implementation)
 }
 
 /* Task item expanded state */
@@ -763,14 +753,6 @@ html, body {
 .task-item-error {
   border-left: 3px solid rgba(239, 68, 68, 0.7);
   background: rgba(35, 25, 25, 0.5);
-}
-
-/* Task header */
-.task-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  cursor: pointer;
 }
 
 /* Status icon */
@@ -820,14 +802,6 @@ html, body {
 
 .task-item-error .task-status-icon {
   color: #ef4444;
-}
-
-/* Task header */
-.task-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
 }
 
 .task-header-main {
