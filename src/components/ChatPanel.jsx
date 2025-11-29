@@ -9,26 +9,13 @@ const QUICK_REPLIES = [
   "Show recent changes"
 ];
 
-const ChatPanel = () => {
+const ChatPanel = ({ projectId, modelPreset }) => {
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      sender: 'agent',
-      text: "Sure, I'm ready to help out. What do you need assistance with?",
-      timestamp: 'Just now'
-    },
-    {
-      id: 2,
-      sender: 'user',
-      text: "I'm prepared to begin our tasks.",
-      timestamp: 'Just now'
-    }
-  ]);
+  const [messages, setMessages] = useState([]);
   
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
-  const [isTyping, setIsTyping] = useState(false);
+  const [isThinking, setIsThinking] = useState(false);
   const [streamingText, setStreamingText] = useState('');
   // Use the constant instead of useState for quick replies
   const quickReplies = QUICK_REPLIES;
@@ -75,62 +62,117 @@ const ChatPanel = () => {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (message.trim()) {
-      const newMessage = {
-        id: messages.length + 1,
-        sender: 'user',
-        text: message,
-        timestamp: 'Just now'
-      };
-      setMessages(prev => [...prev, newMessage]);
-      setMessage('');
-      
-      // Convert UI messages to OpenAI format
-      const openAiMessages = messages.concat(newMessage).map(m => ({
-        role: m.sender === "user" ? "user" : "assistant",
-        content: m.text,
-      }));
-      
-      // Call backend API
-      setIsTyping(true);
-      try {
-        const res = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            projectId: null, // or use actual project ID if available
-            mode: "chat", // or use actual mode if available
-            usePremium: false, // or use actual premium setting if available
-            messages: openAiMessages
-          })
-        });
-        
-        if (!res.ok) {
-          console.error("Backend error:", res.status);
-          setIsTyping(false);
-          return;
-        }
-        
-        const data = await res.json();
-        
-        if (data && data.reply && data.reply.content) {
-          // Convert backend reply to UI message format
-          setMessages(prev => [
-            ...prev,
-            {
-              id: prev.length + 1,
-              sender: data.reply.role === "user" ? "user" : "agent",
-              text: data.reply.content,
-              timestamp: "Just now"
-            }
-          ]);
-        }
-      } catch (error) {
-        console.error("Error sending message:", error);
-        setIsTyping(false);
-      } finally {
-        setIsTyping(false);
+    if (!message.trim()) return;
+
+    const trimmed = message.trim();
+
+    // 1) Append user message to UI
+    const userMessage = {
+      id: messages.length + 1,
+      sender: "user",
+      text: trimmed,
+      timestamp: "Just now",
+    };
+
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
+    setMessage("");
+    setIsThinking(true);
+
+    // 2) Build OpenAI-style messages for backend
+    const openAiMessages = newMessages.map((m) => ({
+      role: m.sender === "user" ? "user" : "assistant",
+      content: m.text,
+    }));
+
+    try {
+      console.log("[ChatPanel] Sending to /api/chat", {
+        projectId: projectId || null,
+        mode: modelPreset.mode,
+        usePremium: modelPreset.usePremium,
+        messages: openAiMessages,
+      });
+
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          projectId: projectId || null,
+          mode: modelPreset.mode,
+          usePremium: modelPreset.usePremium,
+          messages: openAiMessages,
+        }),
+      });
+
+      console.log("[ChatPanel] /api/chat response status:", res.status, res.statusText);
+
+      if (!res.ok) {
+        const text = await res.text().catch(() => null);
+        console.error("[ChatPanel] /api/chat non-OK response body:", text);
+        setIsThinking(false);
+        // Add more robust error handling
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: prev.length + 1,
+            sender: "agent",
+            text: "Sorry, I encountered an error processing your request. Please try again.",
+            timestamp: "Just now",
+          },
+        ]);
+        return;
       }
+
+      let data;
+      try {
+        data = await res.json();
+      } catch (parseErr) {
+        console.error("[ChatPanel] Failed to parse JSON from /api/chat:", parseErr);
+        setIsThinking(false);
+        // Add error message to chat
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: prev.length + 1,
+            sender: "agent",
+            text: "Sorry, I encountered an error processing your request. Please try again.",
+            timestamp: "Just now",
+          },
+        ]);
+        return;
+      }
+
+      console.log("[ChatPanel] /api/chat JSON:", data);
+
+      if (data && data.reply && data.reply.content) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: prev.length + 1,
+            sender: "agent",
+            text: data.reply.content,
+            timestamp: "Just now",
+          },
+        ]);
+      } else {
+        console.warn("[ChatPanel] No reply.content in /api/chat payload:", data);
+        // Add fallback message when no content is returned
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: prev.length + 1,
+            sender: "agent",
+            text: "I received a response but couldn't process it properly. Please try rephrasing your request.",
+            timestamp: "Just now",
+          },
+        ]);
+      }
+    } catch (err) {
+      console.error("[ChatPanel] Error calling /api/chat:", err);
+    } finally {
+      setIsThinking(false);
     }
   };
 
@@ -178,7 +220,7 @@ const ChatPanel = () => {
           );
         })}
 
-        {isTyping && (
+        {isThinking && (
           <div className="agent-message-block fade-in thinking-block">
             <div className="typing-indicator">
               <span className="dot" />
