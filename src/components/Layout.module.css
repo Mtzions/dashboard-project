@@ -75,6 +75,8 @@
   min-width: 0;
   height: 100%; /* Full height */
   width: 100%; /* Full width */
+  /* Ensure the chat panel itself takes full space */
+  min-height: 0; /* Override any min-height constraints */
 }
 
 .chatContainerInner {
@@ -82,6 +84,7 @@
   flex-direction: column;
   height: 100%;
   width: 100%;
+  min-height: 0; /* Ensure inner container doesn't constrain height */
 }
 
 .sidebarCollapsed .chatContainer {

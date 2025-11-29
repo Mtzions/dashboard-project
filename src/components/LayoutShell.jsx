@@ -102,7 +102,7 @@ const LayoutShell = () => {
         {/* Chat Component */}
         <div className={layoutStyles.chatContainer}>
           <div className={layoutStyles.chatContainerInner}>
-            <div className="center-column">
+            <div className="center-column" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               <TopTabs activeTab={activeTab} setActiveTab={setActiveTab} />
               <ChatPanel />
               <ChangesPanel filter={changesFilter} setFilter={setChangesFilter} />
