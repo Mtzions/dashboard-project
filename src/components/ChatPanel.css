@@ -2,6 +2,7 @@
 .messages-container {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.2) rgba(0, 0, 0, 0);
+  width: 100%; /* Ensure full width */
 }
 
 .messages-container::-webkit-scrollbar {
@@ -19,6 +20,40 @@
 
 .messages-container::-webkit-scrollbar-thumb:hover {
   background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Ensure message bubbles take full width */
+.message-bubble {
+  width: 100%; /* Make message bubbles full width */
+  max-width: 100%; /* Ensure they don't exceed container */
+}
+
+/* Ensure message content takes full width */
+.message-content {
+  width: 100%; /* Full width content */
+}
+
+/* Ensure quick reply chips container takes full width */
+.quick-reply-chips {
+  width: 100%; /* Full width for chips */
+  justify-content: flex-start; /* Align to left */
+}
+
+/* Ensure message input form takes full width */
+.message-input-form {
+  width: 100%; /* Full width form */
+  max-width: 100%; /* Prevent overflow */
+}
+
+/* Ensure message input takes full width */
+.message-input {
+  width: 100%; /* Full width input */
+  max-width: 100%; /* Prevent overflow */
+}
+
+/* Ensure send button maintains proper positioning */
+.send-button {
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 /* Typing indicator */
