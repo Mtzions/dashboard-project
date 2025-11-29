@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import GitMenu from './GitMenu';
 import ThemeToggle from './ThemeToggle';
+import ModelSelector from './ModelSelector';
 import './WindowHeader.css';
 
-const WindowHeader = () => {
+const WindowHeader = ({ onModelPresetChange }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef(null);
 
@@ -47,6 +48,9 @@ const WindowHeader = () => {
       <div className="header-toolbar">
         <GitMenu />
         <button className="toolbar-button" aria-label="New task">+</button>
+        <div className="model-selector-container">
+          <ModelSelector onPresetChange={onModelPresetChange} />
+        </div>
         <ThemeToggle />
         <div className="user-menu-container" ref={userMenuRef}>
           <button 

@@ -50,6 +50,11 @@
   padding-right: 16px;
 }
 
+/* Model selector styling */
+.model-selector-container {
+  margin-left: 8px;
+}
+
 /* Toolbar button base styles */
 .toolbar-button {
   width: 32px;

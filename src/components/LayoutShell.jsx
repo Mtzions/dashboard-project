@@ -8,12 +8,14 @@ import { restoreActiveTab, persistActiveTab } from '../utils/persistence';
 import styles from './TaskQueue.module.css';
 import layoutStyles from './Layout.module.css';
 import { motion } from 'framer-motion';
+import { MODEL_PRESETS } from './ModelSelector';
 
 const LayoutShell = () => {
   const [activeTab, setActiveTab] = useState(restoreActiveTab());
   const [showMobileNav, setShowMobileNav] = useState(false);
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
+  const [currentModelPreset, setCurrentModelPreset] = useState(MODEL_PRESETS[0]);
 
   // Persist active tab
   React.useEffect(() => {
@@ -69,9 +71,13 @@ const LayoutShell = () => {
     setCollapsed(prev => !prev);
   };
 
+  const handleModelPresetChange = (preset) => {
+    setCurrentModelPreset(preset);
+  };
+
   return (
     <div className="dashboard-container">
-      <WindowHeader />
+      <WindowHeader onModelPresetChange={handleModelPresetChange} />
       
       {/* Main layout using flexbox */}
       <div className={layoutStyles.mainLayout}>
@@ -99,7 +105,7 @@ const LayoutShell = () => {
                 </div>
                 <TopTabs activeTab={activeTab} setActiveTab={setActiveTab} />
               </div>
-              <ChatPanel />
+              <ChatPanel modelPreset={currentModelPreset} />
             </div>
           </div>
         </div>

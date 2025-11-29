@@ -66,7 +66,7 @@ const ChatPanel = ({ projectId, modelPreset }) => {
 
     const trimmed = message.trim();
 
-    // 1) Append user message to UI
+    // 1) append user message to UI
     const userMessage = {
       id: messages.length + 1,
       sender: "user",
@@ -79,14 +79,14 @@ const ChatPanel = ({ projectId, modelPreset }) => {
     setMessage("");
     setIsThinking(true);
 
-    // 2) Build OpenAI-style messages for backend
+    // 2) map UI messages -> OpenAI messages
     const openAiMessages = newMessages.map((m) => ({
       role: m.sender === "user" ? "user" : "assistant",
       content: m.text,
     }));
 
     try {
-      console.log("[ChatPanel] Sending to /api/chat", {
+      console.log("[ChatPanel] POST /api/chat payload:", {
         projectId: projectId || null,
         mode: modelPreset.mode,
         usePremium: modelPreset.usePremium,
@@ -100,74 +100,37 @@ const ChatPanel = ({ projectId, modelPreset }) => {
         },
         body: JSON.stringify({
           projectId: projectId || null,
-          mode: modelPreset.mode,
+          mode: modelPreset.mode,       // "chat" or "plan"
           usePremium: modelPreset.usePremium,
-          messages: openAiMessages,
+          messages: openAiMessages,     // IMPORTANT: { role, content }
         }),
       });
 
-      console.log("[ChatPanel] /api/chat response status:", res.status, res.statusText);
+      console.log("[ChatPanel] /api/chat status:", res.status, res.statusText);
 
       if (!res.ok) {
-        const text = await res.text().catch(() => null);
-        console.error("[ChatPanel] /api/chat non-OK response body:", text);
+        const bodyText = await res.text().catch(() => null);
+        console.error("[ChatPanel] /api/chat error body:", bodyText);
         setIsThinking(false);
-        // Add more robust error handling
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: prev.length + 1,
-            sender: "agent",
-            text: "Sorry, I encountered an error processing your request. Please try again.",
-            timestamp: "Just now",
-          },
-        ]);
         return;
       }
 
-      let data;
-      try {
-        data = await res.json();
-      } catch (parseErr) {
-        console.error("[ChatPanel] Failed to parse JSON from /api/chat:", parseErr);
-        setIsThinking(false);
-        // Add error message to chat
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: prev.length + 1,
-            sender: "agent",
-            text: "Sorry, I encountered an error processing your request. Please try again.",
-            timestamp: "Just now",
-          },
-        ]);
-        return;
-      }
-
+      const data = await res.json();
       console.log("[ChatPanel] /api/chat JSON:", data);
 
+      // 3) append agent reply using reply.content
       if (data && data.reply && data.reply.content) {
         setMessages((prev) => [
           ...prev,
           {
             id: prev.length + 1,
             sender: "agent",
-            text: data.reply.content,
+            text: data.reply.content,   // this is the Markdown from the model
             timestamp: "Just now",
           },
         ]);
       } else {
-        console.warn("[ChatPanel] No reply.content in /api/chat payload:", data);
-        // Add fallback message when no content is returned
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: prev.length + 1,
-            sender: "agent",
-            text: "I received a response but couldn't process it properly. Please try rephrasing your request.",
-            timestamp: "Just now",
-          },
-        ]);
+        console.warn("[ChatPanel] No reply.content in /api/chat response:", data);
       }
     } catch (err) {
       console.error("[ChatPanel] Error calling /api/chat:", err);
