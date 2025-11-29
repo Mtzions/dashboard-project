@@ -6,6 +6,7 @@ import ChangesPanel from './ChangesPanel';
 import AgentsSidebar from './AgentsSidebar';
 import TaskItem from './TaskItem';
 import { restoreActiveTab, persistActiveTab, restoreChangesFilter, persistChangesFilter } from '../utils/persistence';
+import styles from './TaskQueue.module.css';
 
 const LayoutShell = () => {
   const [activeTab, setActiveTab] = useState(restoreActiveTab());
@@ -81,12 +82,12 @@ const LayoutShell = () => {
         </div>
         
         <div className="right-column">
-          <div className="task-queue-panel">
-            <h2 className="panel-title">Task Queue</h2>
-            <div className="task-list">
+          <div className={styles.taskQueuePanel}>
+            <h2 className={styles.panelTitle}>Task Queue</h2>
+            <div className={styles.taskList}>
               {mockTasks.map((task, index) => (
                 <div key={task.id}>
-                  {index > 0 && <div className="task-separator"></div>}
+                  {index > 0 && <div className={styles.taskSeparator}></div>}
                   <TaskItem task={task} />
                 </div>
               ))}

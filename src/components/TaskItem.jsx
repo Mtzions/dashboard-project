@@ -1,24 +1,8 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const TaskItem = ({ task }) => {
   const [expanded, setExpanded] = useState(false);
-
-  const getStatusClass = (status) => {
-    switch (status) {
-      case 'planning':
-        return 'task-item-planning';
-      case 'queued':
-        return 'task-item-queued';
-      case 'in progress':
-        return 'task-item-in-progress';
-      case 'done':
-        return 'task-item-done';
-      case 'error':
-        return 'task-item-error';
-      default:
-        return 'task-item-default';
-    }
-  };
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -63,55 +47,14 @@ const TaskItem = ({ task }) => {
     }
   };
 
-  const renderProgress = () => {
-    if (task.status !== 'in progress') return null;
-    
-    return (
-      <div className="task-progress-container">
-        <div className="task-progress-bar">
-          <div 
-            className="task-progress-fill"
-            style={{ 
-              width: `${task.progress || 0}%`,
-              animation: 'pulse-progress 2s infinite'
-            }}
-          ></div>
-        </div>
-        <div className="task-progress-text">{task.progress || 0}%</div>
-      </div>
-    );
-  };
-
-  const renderDetails = () => {
-    if (!expanded) return null;
-    
-    return (
-      <div className="task-details">
-        <div className="task-description">
-          {task.description || 'No description available'}
-        </div>
-        {task.prompt && (
-          <div className="task-prompt">
-            <strong>Prompt:</strong> {task.prompt}
-          </div>
-        )}
-        {task.result && (
-          <div className="task-result">
-            <strong>Result:</strong> {task.result}
-          </div>
-        )}
-        <div className="task-meta">
-          <span className="task-timestamp">
-            {task.timestamp ? new Date(task.timestamp).toLocaleTimeString() : 'Just now'}
-          </span>
-          <span className="task-agent">Agent: {task.agent || 'Planner'}</span>
-        </div>
-      </div>
-    );
-  };
-
   return (
-    <div className={`task-item ${getStatusClass(task.status)} ${expanded ? 'expanded' : ''}`}>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      className="task-item"
+    >
       <div className="task-header" onClick={() => setExpanded(!expanded)}>
         <div className="task-status-icon">
           {getStatusIcon(task.status)}
@@ -123,20 +66,44 @@ const TaskItem = ({ task }) => {
           )}
         </div>
         <div className="task-actions">
-          {task.status === 'in progress' && (
-            <div className="task-progress-indicator">
-              {task.progress || 0}%
-            </div>
-          )}
           <div className="task-expand-icon">
             {expanded ? '▲' : '▼'}
           </div>
         </div>
       </div>
       
-      {renderProgress()}
-      {renderDetails()}
-    </div>
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="task-details"
+          >
+            <div className="task-description">
+              {task.description || 'No description available'}
+            </div>
+            {task.prompt && (
+              <div className="task-prompt">
+                <strong>Prompt:</strong> {task.prompt}
+              </div>
+            )}
+            {task.result && (
+              <div className="task-result">
+                <strong>Result:</strong> {task.result}
+              </div>
+            )}
+            <div className="task-meta">
+              <span className="task-timestamp">
+                {task.timestamp ? new Date(task.timestamp).toLocaleTimeString() : 'Just now'}
+              </span>
+              <span className="task-agent">Agent: {task.agent || 'Planner'}</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
 
