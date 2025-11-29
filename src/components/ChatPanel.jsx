@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './ChatPanel.css';
-import AgentMarkdown from './AgentMarkdown';
+import AgentMarkdown from "./AgentMarkdown";
 
 // Define quick replies as a constant outside component to prevent recreation
 const QUICK_REPLIES = [
@@ -63,11 +63,11 @@ const ChatPanel = ({ projectId, modelPreset }) => {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!message.trim()) return;
 
     const trimmed = message.trim();
+    if (!trimmed) return;
 
-    // 1) append user message to UI
+    // 1) Build the new user message for local UI
     const userMessage = {
       id: messages.length + 1,
       sender: "user",
@@ -76,62 +76,68 @@ const ChatPanel = ({ projectId, modelPreset }) => {
     };
 
     const newMessages = [...messages, userMessage];
+
+    // 2) Update UI immediately
     setMessages(newMessages);
     setMessage("");
     setIsThinking(true);
 
-    // 2) map UI messages -> OpenAI messages
-    const openAiMessages = newMessages.map((m) => ({
-      role: m.sender === "user" ? "user" : "assistant",
-      content: m.text,
-    }));
-
     try {
-      console.log("[ChatPanel] POST /api/chat payload:", {
-        projectId: projectId || null,
-        mode: modelPreset.mode,
-        usePremium: modelPreset.usePremium,
-        messages: openAiMessages,
-      });
+      const backendUrl =
+        import.meta.env.VITE_BACKEND_URL || "http://localhost:3001";
 
-      const res = await fetch("/api/chat", {
+      // 3) Map UI messages -> OpenAI chat format
+      const apiMessages = newMessages.map((m) => ({
+        role: m.sender === "user" ? "user" : "assistant",
+        content: m.text ?? "",
+      }));
+
+      const payload = {
+        projectId: projectId || null,
+        mode: modelPreset?.mode || "chat",      // "chat" or "plan"
+        usePremium: !!modelPreset?.usePremium,
+        messages: apiMessages,
+      };
+
+      console.log("[ChatPanel] Sending to /api/chat:", payload);
+
+      const res = await fetch(`${backendUrl}/api/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          projectId: projectId || null,
-          mode: modelPreset.mode,       // "chat" or "plan"
-          usePremium: modelPreset.usePremium,
-          messages: openAiMessages,     // IMPORTANT: { role, content }
-        }),
+        body: JSON.stringify(payload),
       });
 
-      console.log("[ChatPanel] /api/chat status:", res.status, res.statusText);
+      console.log("[ChatPanel] /api/chat status:", res.status);
 
       if (!res.ok) {
-        const bodyText = await res.text().catch(() => null);
-        console.error("[ChatPanel] /api/chat error body:", bodyText);
-        setIsThinking(false);
+        const text = await res.text();
+        console.error("[ChatPanel] /api/chat non-OK:", res.status, text);
         return;
       }
 
       const data = await res.json();
-      console.log("[ChatPanel] /api/chat JSON:", data);
+      console.log("[ChatPanel] /api/chat response:", data);
 
-      // 3) append agent reply using reply.content
-      if (data && data.reply && data.reply.content) {
+      const content = data?.reply?.content;
+      const role = data?.reply?.role || "assistant";
+
+      if (typeof content === "string" && content.length > 0) {
         setMessages((prev) => [
           ...prev,
           {
             id: prev.length + 1,
-            sender: "agent",
-            text: data.reply.content,   // this is the Markdown from the model
+            sender: role === "user" ? "user" : "agent", // normalize assistant -> agent
+            text: content,                              // markdown string
             timestamp: "Just now",
           },
         ]);
       } else {
-        console.warn("[ChatPanel] No reply.content in /api/chat response:", data);
+        console.warn(
+          "[ChatPanel] No valid string reply.content in /api/chat response:",
+          data
+        );
       }
     } catch (err) {
       console.error("[ChatPanel] Error calling /api/chat:", err);
@@ -149,11 +155,11 @@ const ChatPanel = ({ projectId, modelPreset }) => {
     <div className="chat-panel" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
       <div className="messages-container">
         {messages.map((msg, index) => {
-          const isUser = msg.sender === "user";
           const key = msg.id ?? index;
+          const isUser = msg.sender === "user";
 
           if (isUser) {
-            // USER MESSAGE → keep bubble
+            // USER MESSAGE → bubble on right
             return (
               <div
                 key={key}
@@ -161,19 +167,22 @@ const ChatPanel = ({ projectId, modelPreset }) => {
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
                 <div className="message-content">
-                  <div className="message-text">{msg.text}</div>
+                  <div className="message-text">
+                    {String(msg.text ?? "")}
+                  </div>
                   <div className="message-timestamp">{msg.timestamp}</div>
                 </div>
               </div>
             );
           }
 
-          // AGENT MESSAGE → use AgentMarkdown (no bubble)
+          // AGENT MESSAGE → formatted markdown block
           return (
             <div
               key={key}
               className="agent-message-block fade-in"
               style={{ animationDelay: `${index * 0.05}s` }}
+              data-sender={msg.sender}
             >
               <AgentMarkdown text={msg.text} />
               <div className="message-timestamp agent-timestamp">

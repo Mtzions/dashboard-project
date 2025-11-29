@@ -251,15 +251,6 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-.messages-container {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 20px;
-  min-height: 0;
-}
 
 /* Enhanced message styling */
 .message-bubble.agent {
@@ -390,3 +381,5 @@
   outline: 2px solid rgba(74, 202, 128, 0.5);
   outline-offset: 2px;
 }
+
+/* New markdown styling for agent messages */
