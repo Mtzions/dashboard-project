@@ -80,10 +80,11 @@ const LayoutShell = () => {
     <div className="dashboard-container">
       <WindowHeader />
       
-      <div className={layoutStyles.mainContainer}>
+      {/* Main layout using flexbox */}
+      <div className={layoutStyles.mainLayout}>
         {/* Collapsible Agents Sidebar */}
         <motion.div 
-          className={`${layoutStyles.sidebarContainer} ${collapsed ? layoutStyles.sidebarCollapsed : layoutStyles.sidebarExpanded}`}
+          className={`${layoutStyles.sidebar} ${collapsed ? layoutStyles.sidebarCollapsed : layoutStyles.sidebarExpanded}`}
           animate={{ width: collapsed ? 40 : 280 }}
           transition={{ duration: 0.3 }}
         >
@@ -94,16 +95,17 @@ const LayoutShell = () => {
           )}
         </motion.div>
 
-        {/* Toggle Button */}
-        <div className={layoutStyles.toggleButton} onClick={toggleSidebar}>
-          <span className={layoutStyles.toggleButtonIcon}>{collapsed ? '▶' : '◀'}</span>
-        </div>
-
-        {/* Chat Component */}
+        {/* Chat Component - Takes full available space */}
         <div className={layoutStyles.chatContainer}>
           <div className={layoutStyles.chatContainerInner}>
-            <div className="center-column" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-              <TopTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+            <div className={layoutStyles.centerColumn}>
+              {/* Toolbar with toggle button above chat */}
+              <div className={layoutStyles.chatToolbar}>
+                <div className={layoutStyles.toggleButton} onClick={toggleSidebar}>
+                  <span className={layoutStyles.toggleButtonIcon}>{collapsed ? '▶' : '◀'}</span>
+                </div>
+                <TopTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+              </div>
               <ChatPanel />
               <ChangesPanel filter={changesFilter} setFilter={setChangesFilter} />
             </div>
@@ -112,7 +114,7 @@ const LayoutShell = () => {
 
         {/* Collapsible Task Queue + AI Workflow Sidebars */}
         <motion.div 
-          className={`${layoutStyles.sidebarContainer} ${collapsed ? layoutStyles.sidebarCollapsed : layoutStyles.sidebarExpanded}`}
+          className={`${layoutStyles.sidebar} ${collapsed ? layoutStyles.sidebarCollapsed : layoutStyles.sidebarExpanded}`}
           animate={{ width: collapsed ? 40 : 280 }}
           transition={{ duration: 0.3 }}
         >

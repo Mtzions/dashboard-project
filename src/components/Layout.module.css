@@ -1,15 +1,14 @@
-.mainContainer {
+.mainLayout {
   display: flex;
-  flex: 1;
-  overflow: hidden;
-  padding: 16px;
-  gap: 16px;
   width: 100vw;
-  box-sizing: border-box;
   height: calc(100vh - 40px); /* Account for window header height */
+  overflow: hidden;
+  min-width: 0; /* Prevents overflow issues */
+  /* Add margin to create space between top toolbar and chat */
+  margin: 8px 8px 0 8px;
 }
 
-.sidebarContainer {
+.sidebar {
   background: rgba(25, 25, 30, 0.7);
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -74,9 +73,10 @@
   transition: flex 0.3s ease;
   min-width: 0;
   height: 100%; /* Full height */
-  width: 100%; /* Full width */
-  /* Ensure the chat panel itself takes full space */
   min-height: 0; /* Override any min-height constraints */
+  width: 100%; /* Ensure full width */
+  /* Add margin to create space between sidebars and chat */
+  margin: 8px;
 }
 
 .chatContainerInner {
@@ -87,32 +87,39 @@
   min-height: 0; /* Ensure inner container doesn't constrain height */
 }
 
-.sidebarCollapsed .chatContainer {
-  flex: 1.5;
+.centerColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 16px;
+  min-width: 0;
+  min-height: 0;
 }
 
-/* Ensure proper spacing and layout */
-.mainContent {
+.chatToolbar {
   display: flex;
-  flex: 1;
-  overflow: hidden;
-  padding: 16px;
-  gap: 16px;
-  width: 100vw;
-  box-sizing: border-box;
-  height: 100%;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(30, 30, 35, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+  height: 40px; /* Match the height of the window header */
+  /* Add small margin all around to prevent sidebars from touching chat */
+  margin: 8px;
+  border-radius: 8px;
 }
 
 /* Responsive behavior */
 @media (max-width: 768px) {
-  .mainContainer {
+  .mainLayout {
     flex-direction: column;
-    padding: 8px;
-    gap: 8px;
     height: auto;
   }
   
-  .sidebarContainer {
+  .sidebar {
     width: 100% !important;
     height: auto;
     padding: 16px;

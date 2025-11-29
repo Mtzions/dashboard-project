@@ -110,22 +110,23 @@ const ChatPanel = () => {
   };
 
   return (
-    <div className="chat-panel">
-      <div className="messages-container" style={{ maxHeight: 'calc(100% - 100px)', overflowY: 'auto' }}>
+    <div className="chat-panel" style={{ width: '100%' }}>
+      <div className="messages-container" style={{ maxHeight: 'calc(100% - 100px)', overflowY: 'auto', width: '100%' }}>
         {messages.map((msg, index) => (
           <div 
             key={msg.id} 
             className={`message-bubble ${msg.sender}`}
+            style={{ width: '100%' }}
           >
-            <div className="message-content">
+            <div className="message-content" style={{ width: '100%' }}>
               <div className="message-text">{msg.text}</div>
               <div className="message-timestamp">{msg.timestamp}</div>
             </div>
           </div>
         ))}
         {isTyping && (
-          <div className="message-bubble agent">
-            <div className="message-content">
+          <div className="message-bubble agent" style={{ width: '100%' }}>
+            <div className="message-content" style={{ width: '100%' }}>
               <div className="message-text">
                 <span className="typing-indicator">
                   <span className="typing-dot"></span>
@@ -137,8 +138,8 @@ const ChatPanel = () => {
           </div>
         )}
         {streamingText && (
-          <div className="message-bubble agent">
-            <div className="message-content">
+          <div className="message-bubble agent" style={{ width: '100%' }}>
+            <div className="message-content" style={{ width: '100%' }}>
               <div className="message-text">{streamingText}</div>
             </div>
           </div>
@@ -147,7 +148,7 @@ const ChatPanel = () => {
       </div>
       
       {/* Quick Reply Chips */}
-      <div className="quick-reply-chips">
+      <div className="quick-reply-chips" style={{ width: '100%' }}>
         {quickReplies.map((reply, index) => (
           <button
             key={index}
@@ -159,7 +160,7 @@ const ChatPanel = () => {
         ))}
       </div>
       
-      <form className="message-input-form" onSubmit={handleSendMessage}>
+      <form className="message-input-form" onSubmit={handleSendMessage} style={{ width: '100%' }}>
         <input
           ref={inputRef}
           type="text"
@@ -173,6 +174,7 @@ const ChatPanel = () => {
               handleSendMessage(e);
             }
           }}
+          style={{ width: '100%' }}
         />
         <button type="submit" className="send-button">Send</button>
       </form>
