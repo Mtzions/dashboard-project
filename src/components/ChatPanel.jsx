@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './ChatPanel.css';
+import AgentMarkdown from './AgentMarkdown';
 
 // Define quick replies as a constant outside component to prevent recreation
 const QUICK_REPLIES = [
@@ -149,14 +150,15 @@ const ChatPanel = ({ projectId, modelPreset }) => {
       <div className="messages-container">
         {messages.map((msg, index) => {
           const isUser = msg.sender === "user";
+          const key = msg.id ?? index;
 
           if (isUser) {
             // USER MESSAGE → keep bubble
             return (
               <div
-                key={msg.id}
-                className={`message-bubble user fade-in`}
-                style={{ animationDelay: `${index * 0.1}s` }}
+                key={key}
+                className="message-bubble user fade-in"
+                style={{ animationDelay: `${index * 0.05}s` }}
               >
                 <div className="message-content">
                   <div className="message-text">{msg.text}</div>
@@ -166,16 +168,14 @@ const ChatPanel = ({ projectId, modelPreset }) => {
             );
           }
 
-          // AGENT MESSAGE → plain text, NO bubble
+          // AGENT MESSAGE → use AgentMarkdown (no bubble)
           return (
             <div
-              key={msg.id}
+              key={key}
               className="agent-message-block fade-in"
-              style={{ animationDelay: `${index * 0.1}s` }}
+              style={{ animationDelay: `${index * 0.05}s` }}
             >
-              <div className="agent-markdown">
-                {msg.text}
-              </div>
+              <AgentMarkdown text={msg.text} />
               <div className="message-timestamp agent-timestamp">
                 {msg.timestamp}
               </div>

@@ -1,0 +1,30 @@
+import React from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+const AgentMarkdown = ({ text, children, className = "" }) => {
+  // Ensure we have valid content and handle edge cases
+  let content = "";
+  
+  if (typeof text === 'string') {
+    content = text;
+  } else if (typeof children === 'string') {
+    content = children;
+  }
+  
+  // Fallback to empty string if no valid content
+  if (content === null || content === undefined) {
+    content = "";
+  }
+  
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      className={`agent-markdown ${className}`}
+    >
+      {content}
+    </ReactMarkdown>
+  );
+};
+
+export default AgentMarkdown;

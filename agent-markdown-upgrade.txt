@@ -1,0 +1,195 @@
+You are my coding assistant (Cline) working on the WorldSound dashboard frontend.
+
+We already wired the chat UI to the backend, and responses contain Markdown formatting
+(**bold**, ## headings, ```code```, lists, etc.)
+
+PROBLEM:
+- Agent messages currently show raw Markdown without styling.
+- Code blocks do not have syntax highlighting.
+- User messages and agent messages should be visually differentiated.
+
+OBJECTIVE:
+Upgrade the formatting system for AGENT messages with advanced professional rendering:
+- GitHub-style Markdown
+- Syntax highlighted code blocks (JavaScript, JSON, Shell, etc.)
+- Headings, bullet lists, tables, checklists formatted correctly
+- Horizontal rule dividers (`---`) visible as clean UI separators
+- Auto-scroll still maintained smoothly
+
+🔥 Extra Requirements:
+- Agent messages should NOT be in a "bubble"
+- User messages should REMAIN chat bubbles on the right side
+- Improve bubble look (soft shadows, animations)
+- Group rapid agent message sections visually
+- Ensure responsiveness (mobile layout OK)
+
+===============================================================================
+📦 1️⃣ Install Dependencies
+===============================================================================
+
+Run in frontend root:
+
+npm install react-markdown remark-gfm rehype-raw rehype-highlight highlight.js
+
+===============================================================================
+📁 2️⃣ Create src/components/AgentMarkdown.jsx
+===============================================================================
+
+import React from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import rehypeHighlight from "rehype-highlight";
+import "highlight.js/styles/github-dark.css";
+
+const AgentMarkdown = ({ text }) => {
+  return (
+    <ReactMarkdown
+      className="agent-markdown"
+      remarkPlugins={[remarkGfm]}
+      rehypePlugins={[rehypeRaw, rehypeHighlight]}
+    >
+      {text}
+    </ReactMarkdown>
+  );
+};
+
+export default AgentMarkdown;
+
+===============================================================================
+✍️ 3️⃣ Update ChatPanel.jsx Rendering Logic
+===============================================================================
+
+Rules:
+User message ➜ .message-bubble.user (keep current)
+Agent message ➜ <AgentMarkdown text={msg.text} />
+
+Example diff inside messages.map:
+
+if (msg.sender === "user") {
+  return ( /* existing bubble */ );
+}
+
+return (
+  <div key={msg.id} className="agent-message-block fade-in">
+    <AgentMarkdown text={msg.text} />
+    <div className="agent-timestamp">{msg.timestamp}</div>
+  </div>
+);
+
+===============================================================================
+🎨 4️⃣ Add New CSS Styles (in ChatPanel.css)
+===============================================================================
+
+/* AGENT MESSAGE formatting */
+.agent-message-block {
+  width: 100%;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.agent-markdown {
+  font-size: 15px;
+  color: #e7e7e7;
+  line-height: 1.55;
+}
+
+.agent-markdown h1, .agent-markdown h2, .agent-markdown h3 {
+  font-weight: 600;
+  margin: 12px 0 6px;
+}
+
+.agent-markdown ul, .agent-markdown ol {
+  padding-left: 20px;
+  margin: 4px 0 12px;
+}
+
+.agent-markdown code {
+  background: rgba(255,255,255,0.1);
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-size: 13px;
+}
+
+.agent-markdown pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 13px;
+}
+
+.agent-markdown hr {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  margin: 16px 0;
+}
+
+.agent-timestamp {
+  font-size: 11px;
+  color: rgba(200,200,200,0.5);
+  margin-top: 4px;
+  text-align: left;
+}
+
+/* USER MESSAGE improvements */
+.message-bubble.user {
+  background: rgba(60,60,75,0.92);
+  box-shadow:
+    0 2px 10px rgba(0,0,0,0.25),
+    0 0 0 1px rgba(100,100,120,0.25) inset;
+  animation: bubbleIn 0.25s ease forwards;
+}
+
+@keyframes bubbleIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  min-height: 0;
+}
+
+===============================================================================
+🚀 5️⃣ Test with a message that includes:
+===============================================================================
+
+"Give me a sample response formatted using:
+- A **bold intro**
+- A `code` snippet
+- A fenced JavaScript code block
+```js
+console.log('hello');
+
+    •    A checklist:
+    •    one
+    •    two
+    •    A table:
+
+Agent    Status
+Planner    Ready
+Coder    Standby
+
+    •    And a horizontal rule:
+—"
+
+Agent response should now render beautifully.
+
+===============================================================================
+📌 IMPORTANT
+    •    DO NOT modify backend code
+    •    DO NOT change messages state shape
+    •    After this step works, we will optionally upgrade syntax highlighting to
+VS-Code-style via Shiki/Rehype/Theme 🎨
+
+---
+
+### Ready to save?
+I can **auto-generate** this into a downloadable `.txt` file if you'd like.
+
+Would you like me to name it:  
+📄 **agent-markdown-upgrade.txt**
