@@ -10,6 +10,7 @@
   transition: all 0.3s ease;
   height: fit-content;
   min-height: 0;
+  overflow: hidden; /* Prevent overflow issues */
 }
 
 .agents-sidebar.collapsed {
@@ -50,6 +51,32 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Agents Section - Scrollable */
+.agents-section {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.agents-section::-webkit-scrollbar {
+  width: 6px;
+}
+
+.agents-section::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.agents-section::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.agents-section::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 .agents-list {

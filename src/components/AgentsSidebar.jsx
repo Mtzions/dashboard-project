@@ -123,59 +123,62 @@ const AgentsSidebar = ({ onSidebarStateChange }) => {
         {expanded && <span className="sidebar-title">Agents</span>}
       </div>
       
-      <div className="agents-list">
-        {agents.map((agent) => (
-          <div 
-            key={agent.id}
-            className="agent-item"
-            onMouseEnter={() => setHoveredAgent(agent.id)}
-            onMouseLeave={() => setHoveredAgent(null)}
-          >
-            <div className="agent-info">
-              <div className="agent-icon">{agent.icon}</div>
-              <div className="agent-details">
-                {expanded && (
-                  <>
-                    <div className="agent-name">{agent.name}</div>
-                    <div className="agent-meta">
-                      <span className="agent-status" style={{ color: getStatusColor(agent.status) }}>
-                        {getStatusText(agent.status)}
-                      </span>
-                      <span className="agent-last-run">• {agent.lastRun}</span>
-                    </div>
-                  </>
-                )}
-              </div>
-              <div className="agent-actions">
-                <button 
-                  className="actions-menu-button"
-                  aria-label="Agent actions"
-                >
-                  ···
-                </button>
-              </div>
-            </div>
-            
-            {/* Agent detail tooltip */}
-            {hoveredAgent === agent.id && expanded && (
-              <div className="agent-tooltip">
-                <div className="tooltip-content">
-                  <div className="tooltip-header">
-                    <span className="tooltip-icon">{agent.icon}</span>
-                    <span className="tooltip-name">{agent.name}</span>
-                  </div>
-                  <p className="tooltip-description">{agent.description}</p>
-                  <div className="tooltip-footer">
-                    <span className="tooltip-last-run">Last run: {agent.lastRun}</span>
-                  </div>
+      {/* Agents Section - Scrollable */}
+      <div className="agents-section">
+        <div className="agents-list">
+          {agents.map((agent) => (
+            <div 
+              key={agent.id}
+              className="agent-item"
+              onMouseEnter={() => setHoveredAgent(agent.id)}
+              onMouseLeave={() => setHoveredAgent(null)}
+            >
+              <div className="agent-info">
+                <div className="agent-icon">{agent.icon}</div>
+                <div className="agent-details">
+                  {expanded && (
+                    <>
+                      <div className="agent-name">{agent.name}</div>
+                      <div className="agent-meta">
+                        <span className="agent-status" style={{ color: getStatusColor(agent.status) }}>
+                          {getStatusText(agent.status)}
+                        </span>
+                        <span className="agent-last-run">• {agent.lastRun}</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+                <div className="agent-actions">
+                  <button 
+                    className="actions-menu-button"
+                    aria-label="Agent actions"
+                  >
+                    ···
+                  </button>
                 </div>
               </div>
-            )}
-          </div>
-        ))}
+              
+              {/* Agent detail tooltip */}
+              {hoveredAgent === agent.id && expanded && (
+                <div className="agent-tooltip">
+                  <div className="tooltip-content">
+                    <div className="tooltip-header">
+                      <span className="tooltip-icon">{agent.icon}</span>
+                      <span className="tooltip-name">{agent.name}</span>
+                    </div>
+                    <p className="tooltip-description">{agent.description}</p>
+                    <div className="tooltip-footer">
+                      <span className="tooltip-last-run">Last run: {agent.lastRun}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Task Queue Section */}
+      {/* Task Queue Section - Scrollable */}
       {expanded && (
         <div className="task-queue-section">
           <h3 className="task-queue-title">Task Queue</h3>
