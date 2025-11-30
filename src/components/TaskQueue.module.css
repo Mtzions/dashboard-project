@@ -138,10 +138,14 @@
   background: rgba(0, 0, 0, 0.2);
   border-radius: 6px;
   animation: fadeIn 0.2s ease-out;
-  flex-shrink: 0;
+  flex-shrink: 1; /* Changed from 0 to 1 to allow shrinking when needed */
   width: 100%;
   box-sizing: border-box;
-  overflow: visible; /* Ensure content isn't clipped */
+  overflow: visible !important; /* Ensure content isn't clipped - !important for override */
+  min-height: 0; /* Allow shrinking */
+  flex: 1 1 auto; /* Ensure it can grow and shrink properly */
+  display: flex;
+  flex-direction: column;
 }
 
 .task-description-full {
@@ -152,8 +156,10 @@
   word-wrap: break-word;
   hyphens: auto;
   white-space: pre-wrap;
-  overflow: visible; /* Prevent clipping */
-  max-height: none; /* Allow full height */
+  overflow: visible !important; /* Prevent clipping - !important for override */
+  max-height: none !important; /* Allow full height - !important for override */
+  display: block; /* Ensure it's displayed as block element */
+  flex: 1; /* Allow it to grow */
 }
 
 .task-prompt,

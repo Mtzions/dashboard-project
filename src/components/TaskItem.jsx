@@ -116,8 +116,9 @@ const TaskItem = ({ task }) => {
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.15 }}
             className="task-details"
+            style={{ overflow: 'visible' }} // Explicit style to ensure no clipping
           >
-            <div className="task-description-full">
+            <div className="task-description-full" style={{ overflow: 'visible' }}>
               {task.description || 'No description available'}
             </div>
             {task.prompt && (
