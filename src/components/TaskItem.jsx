@@ -49,8 +49,11 @@ const TaskItem = ({ task }) => {
 
   // Handle run task
   const handleRunTask = async () => {
-    console.log(`Run task: ${task.id}`);
     // In a real app, this would dispatch an event or call an API
+    console.log(`Run task: ${task.id}`);
+    window.dispatchEvent(new CustomEvent("worldsound:tasks-updated", {
+      detail: { projectId: "dashboard-project" }
+    }));
   };
 
   return (
@@ -86,7 +89,7 @@ const TaskItem = ({ task }) => {
       
       {/* Expanded details section */}
       {expanded && (
-        <div className="task-details" style={{ height: 'auto' }}>
+        <div className="task-details">
           <div className="task-description-full">
             {task.description || 'No description available'}
           </div>

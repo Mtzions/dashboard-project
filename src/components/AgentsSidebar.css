@@ -183,6 +183,8 @@
   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
   display: flex;
   flex-direction: column;
+  /* Ensure proper scrolling behavior */
+  height: 100%;
 }
 
 .sidebar-tasks .task-list-wrapper::-webkit-scrollbar {
@@ -208,6 +210,8 @@
   flex: 1;
   min-height: 0;
   width: 100%;
+  /* Ensure task list takes full available space */
+  height: 100%;
 }
 
 .sidebar-footer {
