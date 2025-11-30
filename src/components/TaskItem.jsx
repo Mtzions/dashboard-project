@@ -86,7 +86,7 @@ const TaskItem = ({ task }) => {
       
       {/* Expanded details section */}
       {expanded && (
-        <div className="task-details">
+        <div className="task-details" style={{ height: 'auto' }}>
           <div className="task-description-full">
             {task.description || 'No description available'}
           </div>

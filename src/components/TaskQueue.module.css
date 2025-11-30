@@ -18,6 +18,8 @@
   margin-bottom: 8px; /* Space between cards */
   width: 100%; /* Ensure full width */
   flex: 0 0 auto; /* Prevent unwanted shrinking */
+  /* Ensure the container grows with content */
+  height: auto;
 }
 
 .task-item:hover {
@@ -140,6 +142,8 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
+  /* Ensure the details section can grow with content */
+  height: auto;
 }
 
 .task-description-full {
@@ -155,6 +159,8 @@
   display: block;
   flex: 1;
   min-height: 0;
+  /* Ensure content fills available space */
+  width: 100%;
 }
 
 .task-prompt,
