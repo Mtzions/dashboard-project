@@ -2,10 +2,9 @@ import React from 'react';
 
 const TopTabs = ({ activeTab, setActiveTab }) => {
   const tabs = [
-    { id: 'console', label: 'Cline Console' },
     { id: 'chat', label: 'Chat Agent Chat' },
-    { id: 'workflow', label: 'Workflow Runs' },
-    { id: 'changes', label: 'Changes' }
+    { id: 'console', label: 'Cline Console' },
+    { id: 'workflow', label: 'Workflow Runs' }
   ];
 
   const handleTabClick = (tabId) => {

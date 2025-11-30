@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import WindowHeader from './WindowHeader';
 import TopTabs from './TopTabs';
 import ChatPanel from './ChatPanel';
@@ -9,9 +9,12 @@ import styles from './TaskQueue.module.css';
 import layoutStyles from './Layout.module.css';
 import { motion } from 'framer-motion';
 import { MODEL_PRESETS } from './ModelSelector';
+import { useProject } from '../context/ProjectStateContext';
+import WorkflowRunsPanel from './WorkflowRunsPanel';
+import ClineConsole from './ClineConsole';
 
-const LayoutShell = () => {
-  const [activeTab, setActiveTab] = useState(restoreActiveTab());
+const LayoutShell = ({ projectId }) => {
+  const { activeTab, setActiveTab } = useProject();
   const [showMobileNav, setShowMobileNav] = useState(false);
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
@@ -22,57 +25,25 @@ const LayoutShell = () => {
     persistActiveTab(activeTab);
   }, [activeTab]);
 
-  // Mock task data for demonstration
-  const mockTasks = [
-    {
-      id: 1,
-      title: "Analyze user feedback patterns",
-      description: "Examine recent feedback to identify common themes",
-      status: "done",
-      timestamp: Date.now() - 3600000,
-      agent: "Planner"
-    },
-    {
-      id: 2,
-      title: "Generate database schema",
-      description: "Create optimized schema for new analytics module",
-      status: "in progress",
-      progress: 65,
-      timestamp: Date.now() - 1800000,
-      agent: "Planner"
-    },
-    {
-      id: 3,
-      title: "Implement authentication layer",
-      description: "Set up secure login and token management",
-      status: "queued",
-      timestamp: Date.now() - 1200000,
-      agent: "Planner"
-    },
-    {
-      id: 4,
-      title: "Write unit tests for API endpoints",
-      description: "Cover all new endpoints with comprehensive tests",
-      status: "planning",
-      timestamp: Date.now() - 600000,
-      agent: "Planner"
-    },
-    {
-      id: 5,
-      title: "Deploy to staging environment",
-      description: "Release latest build to staging for QA",
-      status: "error",
-      timestamp: Date.now() - 300000,
-      agent: "Planner"
-    }
-  ];
-
   const toggleSidebar = () => {
     setCollapsed(prev => !prev);
   };
 
   const handleModelPresetChange = (preset) => {
     setCurrentModelPreset(preset);
+  };
+
+  const renderActiveTab = () => {
+    switch (activeTab) {
+      case 'chat':
+        return <ChatPanel modelPreset={currentModelPreset} />;
+      case 'console':
+        return <ClineConsole />;
+      case 'workflow':
+        return <WorkflowRunsPanel />;
+      default:
+        return <ChatPanel modelPreset={currentModelPreset} />;
+    }
   };
 
   return (
@@ -105,7 +76,7 @@ const LayoutShell = () => {
                 </div>
                 <TopTabs activeTab={activeTab} setActiveTab={setActiveTab} />
               </div>
-              <ChatPanel modelPreset={currentModelPreset} />
+              {renderActiveTab()}
             </div>
           </div>
         </div>
@@ -122,12 +93,45 @@ const LayoutShell = () => {
             <>
               <h2 className={styles.panelTitle}>Task Queue</h2>
               <div className={styles.taskList}>
-                {mockTasks.map((task, index) => (
-                  <div key={task.id}>
-                    {index > 0 && <div className={styles.taskSeparator}></div>}
-                    <TaskItem task={task} />
+                <div className="task-item">
+                  <div className="task-header">
+                    <div className="task-title">Analyzing user feedback</div>
+                    <div className="task-status">Completed</div>
                   </div>
-                ))}
+                  <div className="task-description">Examining recent feedback to identify common themes</div>
+                </div>
+                <div className="task-separator"></div>
+                <div className="task-item">
+                  <div className="task-header">
+                    <div className="task-title">Database schema</div>
+                    <div className="task-status">In Progress</div>
+                  </div>
+                  <div className="task-description">Creating optimized schema for new analytics module</div>
+                </div>
+                <div className="task-separator"></div>
+                <div className="task-item">
+                  <div className="task-header">
+                    <div className="task-title">Authentication layer</div>
+                    <div className="task-status">Queued</div>
+                  </div>
+                  <div className="task-description">Setting up secure login and token management</div>
+                </div>
+                <div className="task-separator"></div>
+                <div className="task-item">
+                  <div className="task-header">
+                    <div className="task-title">Unit tests</div>
+                    <div className="task-status">Planning</div>
+                  </div>
+                  <div className="task-description">Writing comprehensive tests for new endpoints</div>
+                </div>
+                <div className="task-separator"></div>
+                <div className="task-item">
+                  <div className="task-header">
+                    <div className="task-title">Staging deployment</div>
+                    <div className="task-status">Error</div>
+                  </div>
+                  <div className="task-description">Releasing to staging for QA</div>
+                </div>
               </div>
               
               <h2 className="panel-title" style={{ marginTop: '16px' }}>AI Workflow</h2>
@@ -188,15 +192,15 @@ const LayoutShell = () => {
           <span>Chat</span>
         </div>
         <div 
-          className={`mobile-nav-item ${activeTab === 'tasks' ? 'active' : ''}`}
-          onClick={() => setActiveTab('tasks')}
+          className={`mobile-nav-item ${activeTab === 'workflow' ? 'active' : ''}`}
+          onClick={() => setActiveTab('workflow')}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2"/>
             <path d="M12 16V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
             <path d="M12 8H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
           </svg>
-          <span>Tasks</span>
+          <span>Workflow</span>
         </div>
       </div>
     </div>

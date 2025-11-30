@@ -2,6 +2,7 @@ import React from 'react';
 import LayoutShell from './components/LayoutShell';
 import ToastContainer from './components/ToastContainer';
 import './App.css';
+import { ProjectStateProvider } from './context/ProjectStateContext';
 
 function App() {
   // Ensure page starts at top on load
@@ -10,10 +11,10 @@ function App() {
   }, []);
 
   return (
-    <>
+    <ProjectStateProvider projectId="dashboard-project">
       <LayoutShell />
       <ToastContainer />
-    </>
+    </ProjectStateProvider>
   );
 }
 

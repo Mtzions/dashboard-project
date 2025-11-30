@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './ChatPanel.css';
 import AgentMarkdown from "./AgentMarkdown";
+import { api } from "../utils/apiClient";
+import { useProject } from "../context/ProjectStateContext";
+import PlannerWithMCPButton from "./PlannerWithMCPButton";
 
 // Define quick replies as a constant outside component to prevent recreation
 const QUICK_REPLIES = [
@@ -10,9 +13,10 @@ const QUICK_REPLIES = [
   "Show recent changes"
 ];
 
-const ChatPanel = ({ projectId, modelPreset }) => {
+const ChatPanel = ({ modelPreset }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
   
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -21,7 +25,32 @@ const ChatPanel = ({ projectId, modelPreset }) => {
   // Use the constant instead of useState for quick replies
   const quickReplies = QUICK_REPLIES;
 
-  // Only scroll when messages actually change, not on initial render
+  // Load chat history when component mounts
+  useEffect(() => {
+    const loadChatHistory = async () => {
+      try {
+        setLoading(true);
+        const history = await api.getMessages("dashboard-project", "user_planner");
+        // Convert backend format to frontend format
+        const formattedMessages = history.map(msg => ({
+          id: msg.id,
+          sender: msg.role === "user" ? "user" : "agent",
+          text: msg.content,
+          timestamp: msg.timestamp || "Just now"
+        }));
+        setMessages(formattedMessages);
+      } catch (err) {
+        console.error("Failed to load chat history:", err);
+        // Even if loading fails, we still want to show the chat interface
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadChatHistory();
+  }, []);
+
+  // Auto-scroll to bottom when messages change
   useEffect(() => {
     const timer = setTimeout(() => {
       if (messagesEndRef.current) {
@@ -83,42 +112,30 @@ const ChatPanel = ({ projectId, modelPreset }) => {
     setIsThinking(true);
 
     try {
-      const backendUrl =
-        import.meta.env.VITE_BACKEND_URL || "http://localhost:3001";
-
-      // 3) Map UI messages -> OpenAI chat format
+// 3) Map UI messages -> OpenAI chat format
       const apiMessages = newMessages.map((m) => ({
         role: m.sender === "user" ? "user" : "assistant",
         content: m.text ?? "",
       }));
 
+      // Use the api client for consistent API calls
       const payload = {
-        projectId: projectId || null,
+        projectId: "dashboard-project", // Fixed project ID as per backend contract
         mode: modelPreset?.mode || "chat",      // "chat" or "plan"
-        usePremium: !!modelPreset?.usePremium,
         messages: apiMessages,
       };
 
-      console.log("[ChatPanel] Sending to /api/chat:", payload);
-
-      const res = await fetch(`${backendUrl}/api/chat`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
+      // Enhanced debugging for proxy verification
+      console.log("[ChatPanel] DEBUG: About to send to /api/chat:", {
+        ...payload,
+        // Don't log the full messages array to avoid console spam
+        messagesPreview: payload.messages.slice(-1).map(m => ({role: m.role, content: m.content.substring(0, 50) + '...'}))
       });
 
-      console.log("[ChatPanel] /api/chat status:", res.status);
+      // Use the api client instead of direct fetch for consistency
+      const data = await api.chat(payload);
 
-      if (!res.ok) {
-        const text = await res.text();
-        console.error("[ChatPanel] /api/chat non-OK:", res.status, text);
-        return;
-      }
-
-      const data = await res.json();
-      console.log("[ChatPanel] /api/chat response:", data);
+      console.log("[ChatPanel] DEBUG: /api/chat response received:", data);
 
       const content = data?.reply?.content;
       const role = data?.reply?.role || "assistant";
@@ -135,12 +152,22 @@ const ChatPanel = ({ projectId, modelPreset }) => {
         ]);
       } else {
         console.warn(
-          "[ChatPanel] No valid string reply.content in /api/chat response:",
+          "[ChatPanel] WARNING: No valid string reply.content in /api/chat response:",
           data
         );
       }
     } catch (err) {
-      console.error("[ChatPanel] Error calling /api/chat:", err);
+      console.error("[ChatPanel] ERROR: Failed to call /api/chat:", err);
+      // Show error in UI by adding an error message
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: prev.length + 1,
+          sender: "agent",
+          text: `Error: ${err.message || 'Failed to get response'}`,
+          timestamp: "Just now",
+        },
+      ]);
     } finally {
       setIsThinking(false);
     }
@@ -150,6 +177,14 @@ const ChatPanel = ({ projectId, modelPreset }) => {
     setMessage(text);
     inputRef.current?.focus();
   };
+
+  if (loading) {
+    return (
+      <div className="chat-panel" style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        Loading chat history...
+      </div>
+    );
+  }
 
   return (
     <div className="chat-panel" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>

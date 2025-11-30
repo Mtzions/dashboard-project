@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useProject } from '../context/ProjectStateContext';
 
 const TaskItem = ({ task }) => {
   const [expanded, setExpanded] = useState(false);
