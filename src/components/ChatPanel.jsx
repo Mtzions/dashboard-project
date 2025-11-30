@@ -21,6 +21,7 @@ const ChatPanel = ({ modelPreset }) => {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const [isThinking, setIsThinking] = useState(false);
+  const [isPlanning, setIsPlanning] = useState(false);
   const [streamingText, setStreamingText] = useState('');
   // Use the constant instead of useState for quick replies
   const quickReplies = QUICK_REPLIES;
@@ -178,6 +179,71 @@ const ChatPanel = ({ modelPreset }) => {
     inputRef.current?.focus();
   };
 
+  const handlePlanFromChat = async (e) => {
+    e.preventDefault();
+    
+    if (isPlanning || messages.length === 0) return;
+    
+    setIsPlanning(true);
+    
+    try {
+      // Build OpenAI messages from message history
+      const openAiMessages = messages.map((m) => ({
+        role: m.sender === "user" ? "user" : "assistant",
+        content: m.text ?? "",
+      }));
+      
+      // Get the latest user input and append it to the messages
+      const latestUserMessage = message.trim();
+      if (latestUserMessage) {
+        openAiMessages.push({
+          role: "user",
+          content: latestUserMessage
+        });
+      }
+      
+      // Call createPlanFromMessages
+      const planResponse = await api.createPlanFromMessages("dashboard-project", openAiMessages, true);
+      
+      // Create friendly summary message
+      const taskCount = planResponse.createdTasks?.length || 0;
+      const summaryMessage = `Planner created ${taskCount} task${taskCount !== 1 ? 's' : ''} from this chat conversation.`;
+      
+      // Add the summary message to chat
+      const summaryMessageObj = {
+        id: messages.length + 1,
+        sender: "agent",
+        text: summaryMessage,
+        timestamp: "Just now",
+      };
+      
+      setMessages(prev => [...prev, summaryMessageObj]);
+      
+      // Clear input box
+      setMessage("");
+      
+      // Dispatch event to refresh task queue
+      window.dispatchEvent(
+        new CustomEvent("worldsound:tasks-updated", { detail: { projectId: "dashboard-project" } })
+      );
+      
+    } catch (err) {
+      console.error("[ChatPanel] ERROR: Failed to create plan:", err);
+      // Show error in UI
+      setMessages(prev => [
+        ...prev,
+        {
+          id: prev.length + 1,
+          sender: "agent",
+          text: `Error creating plan: ${err.message || 'Failed to create plan'}`,
+          timestamp: "Just now",
+        },
+      ]);
+    } finally {
+      setIsPlanning(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="chat-panel" style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -269,6 +335,14 @@ const ChatPanel = ({ modelPreset }) => {
           }}
           style={{ width: '100%' }}
         />
+        <button 
+          type="button" 
+          className="plan-button"
+          onClick={handlePlanFromChat}
+          disabled={isPlanning || messages.length === 0}
+        >
+          {isPlanning ? 'Planning...' : 'Plan from this chat'}
+        </button>
         <button type="submit" className="send-button">Send</button>
       </form>
     </div>

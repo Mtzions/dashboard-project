@@ -93,6 +93,7 @@ const LayoutShell = ({ projectId }) => {
             <>
               <h2 className={styles.panelTitle}>Task Queue</h2>
               <div className={styles.taskList}>
+                {/* Task items will be loaded dynamically */}
                 <div className="task-item">
                   <div className="task-header">
                     <div className="task-title">Analyzing user feedback</div>

@@ -70,6 +70,23 @@ export const api = {
     });
   },
 
+  // Create plan from messages endpoint
+  async createPlanFromMessages(projectId = DEFAULT_PROJECT_ID, messages, usePremium = true) {
+    return jsonRequest("/plan", {
+      method: "POST",
+      body: JSON.stringify({
+        projectId,
+        messages,
+        usePremium,
+      }),
+    });
+  },
+
+  // Get tasks endpoint
+  async getTasks(projectId = DEFAULT_PROJECT_ID) {
+    return jsonRequest(`/tasks/${projectId}`, { method: "GET" });
+  },
+
   // Planner with MCP endpoint
   async plannerWithMcp({ projectId = DEFAULT_PROJECT_ID, prompt }) {
     return jsonRequest("/planner/with-mcp", {
@@ -82,10 +99,6 @@ export const api = {
   },
 
   // Task management
-  async getTasks(projectId = DEFAULT_PROJECT_ID) {
-    return jsonRequest(`/tasks/${projectId}`, { method: "GET" });
-  },
-
   async createTask(projectId = DEFAULT_PROJECT_ID, taskInput) {
     return jsonRequest(`/tasks/${projectId}`, {
       method: "POST",

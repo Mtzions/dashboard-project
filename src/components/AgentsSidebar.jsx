@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './AgentsSidebar.css';
+import { api } from '../utils/apiClient';
 
 const AgentsSidebar = ({ onSidebarStateChange }) => {
   const [expanded, setExpanded] = useState(true);
   const [hoveredAgent, setHoveredAgent] = useState(null);
+  const [tasks, setTasks] = useState([]);
 
   // Mock agent data
   const agents = [
@@ -65,6 +67,33 @@ const AgentsSidebar = ({ onSidebarStateChange }) => {
     console.log(`Agent ${agentId} action: ${action}`);
     // In a real app, this would trigger the actual action
   };
+
+  // Load tasks function
+  const loadTasks = async () => {
+    try {
+      const res = await api.getTasks("dashboard-project");
+      setTasks(res.tasks || []);
+    } catch (err) {
+      console.error("Failed to load tasks:", err);
+      setTasks([]);
+    }
+  };
+
+  // Load tasks on mount and when projectId changes
+  useEffect(() => {
+    loadTasks();
+  }, []);
+
+  // Set up event listener for task updates
+  useEffect(() => {
+    function handleTasksUpdated(e) {
+      if (!e.detail || e.detail.projectId !== "dashboard-project") return;
+      loadTasks();
+    }
+    
+    window.addEventListener("worldsound:tasks-updated", handleTasksUpdated);
+    return () => window.removeEventListener("worldsound:tasks-updated", handleTasksUpdated);
+  }, []);
 
   // Notify parent component of sidebar state changes
   React.useEffect(() => {
@@ -137,6 +166,28 @@ const AgentsSidebar = ({ onSidebarStateChange }) => {
           </div>
         ))}
       </div>
+
+      {/* Task Queue Section */}
+      {expanded && (
+        <div className="task-queue-section">
+          <h3 className="task-queue-title">Task Queue</h3>
+          <div className="task-list">
+            {tasks.length > 0 ? (
+              tasks.map((task) => (
+                <div key={task.id} className="task-item">
+                  <div className="task-header">
+                    <div className="task-title">{task.title}</div>
+                    <div className="task-status">{task.status}</div>
+                  </div>
+                  <div className="task-description">{task.description}</div>
+                </div>
+              ))
+            ) : (
+              <div className="no-tasks">No tasks available</div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
