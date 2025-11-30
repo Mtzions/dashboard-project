@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProject } from '../context/ProjectStateContext';
+import StatusPill from './StatusPill';
 
 const TaskItem = ({ task }) => {
   const [expanded, setExpanded] = useState(false);
@@ -48,6 +49,23 @@ const TaskItem = ({ task }) => {
     }
   };
 
+  // Get status color for pill
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'queued': return '#6B7280'; // gray
+      case 'running': return '#3B82F6'; // blue
+      case 'done': return '#10B981'; // green
+      case 'error': return '#EF4444'; // red
+      default: return '#6B7280'; // gray
+    }
+  };
+
+  // Handle run task
+  const handleRunTask = () => {
+    console.log(`Run task: ${task.id}`);
+    // In a real app, this would dispatch an event or call an API
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -71,6 +89,18 @@ const TaskItem = ({ task }) => {
             {expanded ? '▲' : '▼'}
           </div>
         </div>
+      </div>
+      
+      {/* Status pill and run button */}
+      <div className="task-controls">
+        <StatusPill status={task.status} />
+        <button 
+          className="run-task-btn"
+          onClick={handleRunTask}
+          aria-label={`Run task ${task.title}`}
+        >
+          Run
+        </button>
       </div>
       
       <AnimatePresence>

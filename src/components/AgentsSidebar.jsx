@@ -103,6 +103,13 @@ const AgentsSidebar = ({ onSidebarStateChange }) => {
     }
   }, [expanded, onSidebarStateChange]);
 
+  // Handle run all pending tasks
+  const handleRunAllPending = () => {
+    console.log("Run all pending tasks triggered");
+    // In a real app, this would dispatch an event or call an API
+    // For now, just log to console
+  };
+
   return (
     <div className={`agents-sidebar ${expanded ? 'expanded' : 'collapsed'}`}>
       <div className="sidebar-header">
@@ -172,14 +179,24 @@ const AgentsSidebar = ({ onSidebarStateChange }) => {
       {expanded && (
         <div className="task-queue-section">
           <h3 className="task-queue-title">Task Queue</h3>
-          <div className="task-list">
-            {tasks.length > 0 ? (
-              tasks.map((task) => (
-                <TaskItem key={task.id} task={task} />
-              ))
-            ) : (
-              <div className="no-tasks">No tasks available</div>
-            )}
+          <div className="task-list-wrapper">
+            <div className="task-list">
+              {tasks.length > 0 ? (
+                tasks.map((task) => (
+                  <TaskItem key={task.id} task={task} />
+                ))
+              ) : (
+                <div className="no-tasks">No tasks available</div>
+              )}
+            </div>
+          </div>
+          <div className="task-footer">
+            <button 
+              className="run-all-pending-btn"
+              onClick={handleRunAllPending}
+            >
+              Run All Pending Tasks
+            </button>
           </div>
         </div>
       )}
