@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useProject } from '../context/ProjectStateContext';
 import StatusPill from './StatusPill';
 
 const TaskItem = ({ task }) => {
@@ -49,17 +48,6 @@ const TaskItem = ({ task }) => {
     }
   };
 
-  // Get status color for pill
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'queued': return '#6B7280'; // gray
-      case 'running': return '#3B82F6'; // blue
-      case 'done': return '#10B981'; // green
-      case 'error': return '#EF4444'; // red
-      default: return '#6B7280'; // gray
-    }
-  };
-
   // Handle run task
   const handleRunTask = () => {
     console.log(`Run task: ${task.id}`);
@@ -81,7 +69,7 @@ const TaskItem = ({ task }) => {
         <div className="task-content">
           <div className="task-title">{task.title}</div>
           {task.description && (
-            <div className="task-subtitle">{task.description}</div>
+            <div className="task-description-snippet">{task.description}</div>
           )}
         </div>
         <div className="task-actions">
@@ -112,7 +100,7 @@ const TaskItem = ({ task }) => {
             transition={{ duration: 0.15 }}
             className="task-details"
           >
-            <div className="task-description">
+            <div className="task-description-full">
               {task.description || 'No description available'}
             </div>
             {task.prompt && (

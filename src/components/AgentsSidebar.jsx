@@ -112,6 +112,7 @@ const AgentsSidebar = ({ onSidebarStateChange }) => {
 
   return (
     <div className={`agents-sidebar ${expanded ? 'expanded' : 'collapsed'}`}>
+      {/* Sidebar Header */}
       <div className="sidebar-header">
         <button 
           className="toggle-button"
@@ -120,11 +121,12 @@ const AgentsSidebar = ({ onSidebarStateChange }) => {
         >
           {expanded ? '◀' : '▶'}
         </button>
-        {expanded && <span className="sidebar-title">Agents</span>}
+        {expanded && <span className="sidebar-title">WorldSound Agents</span>}
       </div>
-      
-      {/* Agents Section - Scrollable */}
-      <div className="agents-section">
+
+      {/* Agents Section - Always visible, non-scrollable */}
+      <div className="sidebar-agents">
+        <h3 className="sidebar-section-title">Agents</h3>
         <div className="agents-list">
           {agents.map((agent) => (
             <div 
@@ -178,22 +180,23 @@ const AgentsSidebar = ({ onSidebarStateChange }) => {
         </div>
       </div>
 
+      {/* Divider */}
+      <div className="sidebar-divider"></div>
+
       {/* Task Queue Section - Scrollable */}
       {expanded && (
-        <div className="task-queue-section">
-          <h3 className="task-queue-title">Task Queue</h3>
-          <div className="task-list-wrapper">
-            <div className="task-list">
-              {tasks.length > 0 ? (
-                tasks.map((task) => (
-                  <TaskItem key={task.id} task={task} />
-                ))
-              ) : (
-                <div className="no-tasks">No tasks available</div>
-              )}
-            </div>
+        <div className="sidebar-tasks">
+          <h3 className="sidebar-section-title">Task Queue</h3>
+          <div className="task-list">
+            {tasks.length > 0 ? (
+              tasks.map((task) => (
+                <TaskItem key={task.id} task={task} />
+              ))
+            ) : (
+              <div className="no-tasks">No tasks available</div>
+            )}
           </div>
-          <div className="task-footer">
+          <div className="sidebar-footer">
             <button 
               className="run-all-pending-btn"
               onClick={handleRunAllPending}
