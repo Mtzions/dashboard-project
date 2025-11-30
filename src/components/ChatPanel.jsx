@@ -207,7 +207,15 @@ const ChatPanel = ({ modelPreset }) => {
       
       // Create friendly summary message
       const taskCount = planResponse.createdTasks?.length || 0;
-      const summaryMessage = `Planner created ${taskCount} task${taskCount !== 1 ? 's' : ''} from this chat conversation.`;
+      let summaryMessage = `Planner created ${taskCount} task${taskCount !== 1 ? 's' : ''} from this chat conversation.`;
+      
+      // Add task titles if available
+      if (planResponse.createdTasks && planResponse.createdTasks.length > 0) {
+        const taskTitles = planResponse.createdTasks.slice(0, 3).map(task => `- ${task.title}`);
+        if (taskTitles.length > 0) {
+          summaryMessage += `\n\nTasks created:\n${taskTitles.join('\n')}`;
+        }
+      }
       
       // Add the summary message to chat
       const summaryMessageObj = {

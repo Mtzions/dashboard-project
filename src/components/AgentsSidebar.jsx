@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './AgentsSidebar.css';
 import { api } from '../utils/apiClient';
+import TaskItem from './TaskItem';
 
 const AgentsSidebar = ({ onSidebarStateChange }) => {
   const [expanded, setExpanded] = useState(true);
@@ -174,13 +175,7 @@ const AgentsSidebar = ({ onSidebarStateChange }) => {
           <div className="task-list">
             {tasks.length > 0 ? (
               tasks.map((task) => (
-                <div key={task.id} className="task-item">
-                  <div className="task-header">
-                    <div className="task-title">{task.title}</div>
-                    <div className="task-status">{task.status}</div>
-                  </div>
-                  <div className="task-description">{task.description}</div>
-                </div>
+                <TaskItem key={task.id} task={task} />
               ))
             ) : (
               <div className="no-tasks">No tasks available</div>

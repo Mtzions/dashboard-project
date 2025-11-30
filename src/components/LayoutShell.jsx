@@ -12,6 +12,7 @@ import { MODEL_PRESETS } from './ModelSelector';
 import { useProject } from '../context/ProjectStateContext';
 import WorkflowRunsPanel from './WorkflowRunsPanel';
 import ClineConsole from './ClineConsole';
+import ExecutionBoard from './ExecutionBoard';
 
 const LayoutShell = ({ projectId }) => {
   const { activeTab, setActiveTab } = useProject();
@@ -90,92 +91,7 @@ const LayoutShell = ({ projectId }) => {
           {collapsed ? (
             <div className={layoutStyles.toggleButtonIcon}>▶</div>
           ) : (
-            <>
-              <h2 className={styles.panelTitle}>Task Queue</h2>
-              <div className={styles.taskList}>
-                {/* Task items will be loaded dynamically */}
-                <div className="task-item">
-                  <div className="task-header">
-                    <div className="task-title">Analyzing user feedback</div>
-                    <div className="task-status">Completed</div>
-                  </div>
-                  <div className="task-description">Examining recent feedback to identify common themes</div>
-                </div>
-                <div className="task-separator"></div>
-                <div className="task-item">
-                  <div className="task-header">
-                    <div className="task-title">Database schema</div>
-                    <div className="task-status">In Progress</div>
-                  </div>
-                  <div className="task-description">Creating optimized schema for new analytics module</div>
-                </div>
-                <div className="task-separator"></div>
-                <div className="task-item">
-                  <div className="task-header">
-                    <div className="task-title">Authentication layer</div>
-                    <div className="task-status">Queued</div>
-                  </div>
-                  <div className="task-description">Setting up secure login and token management</div>
-                </div>
-                <div className="task-separator"></div>
-                <div className="task-item">
-                  <div className="task-header">
-                    <div className="task-title">Unit tests</div>
-                    <div className="task-status">Planning</div>
-                  </div>
-                  <div className="task-description">Writing comprehensive tests for new endpoints</div>
-                </div>
-                <div className="task-separator"></div>
-                <div className="task-item">
-                  <div className="task-header">
-                    <div className="task-title">Staging deployment</div>
-                    <div className="task-status">Error</div>
-                  </div>
-                  <div className="task-description">Releasing to staging for QA</div>
-                </div>
-              </div>
-              
-              <h2 className="panel-title" style={{ marginTop: '16px' }}>AI Workflow</h2>
-              <div className="workflow-description">
-                Recent workflow execution with automated steps
-              </div>
-              
-              <div className="workflow-git-info">
-                <div className="git-info-item">
-                  <span className="git-label">Branch:</span>
-                  <span className="git-value">feature/new-ui</span>
-                </div>
-                <div className="git-info-item">
-                  <span className="git-label">Commit:</span>
-                  <span className="git-value">Add new dashboard components</span>
-                </div>
-                <div className="git-info-item">
-                  <span className="git-label">CI Status:</span>
-                  <div className="ci-status">
-                    <span className="ci-text">✓ Passed</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="workflow-list">
-                <div className="workflow-item">
-                  <div className="dot-indicator--completed"></div>
-                  <div className="task-text">File analysis</div>
-                </div>
-                <div className="workflow-item">
-                  <div className="dot-indicator--completed"></div>
-                  <div className="task-text">Code generation</div>
-                </div>
-                <div className="workflow-item">
-                  <div className="dot-indicator--in-progress"></div>
-                  <div className="task-text">Testing</div>
-                </div>
-                <div className="workflow-item">
-                  <div className="dot-indicator--pending"></div>
-                  <div className="task-text">Deployment</div>
-                </div>
-              </div>
-            </>
+            <ExecutionBoard />
           )}
         </motion.div>
       </div>
