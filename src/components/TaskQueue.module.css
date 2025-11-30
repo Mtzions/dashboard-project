@@ -17,6 +17,7 @@
   min-height: 60px;
   margin-bottom: 8px; /* Space between cards */
   width: 100%; /* Ensure full width */
+  flex: 0 0 auto; /* Prevent unwanted shrinking */
 }
 
 .task-item:hover {
@@ -91,6 +92,7 @@
   font-size: 12px;
   color: #a0a0a0;
   transition: transform 0.2s ease;
+  cursor: pointer;
 }
 
 .task-expand-icon.expanded {
@@ -125,27 +127,19 @@
   border-color: rgba(74, 202, 128, 0.5);
 }
 
-.run-task-btn.running {
-  background: rgba(59, 130, 246, 0.15);
-  color: #93c5fd;
-  border-color: rgba(59, 130, 246, 0.3);
-}
-
 .task-details {
   margin-top: 12px;
   padding-top: 12px;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   background: rgba(0, 0, 0, 0.2);
   border-radius: 6px;
-  animation: fadeIn 0.2s ease-out;
-  flex-shrink: 1; /* Changed from 0 to 1 to allow shrinking when needed */
   width: 100%;
   box-sizing: border-box;
-  overflow: visible !important; /* Ensure content isn't clipped - !important for override */
-  min-height: 0; /* Allow shrinking */
-  flex: 1 1 auto; /* Ensure it can grow and shrink properly */
+  overflow: visible !important;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .task-description-full {
@@ -156,10 +150,11 @@
   word-wrap: break-word;
   hyphens: auto;
   white-space: pre-wrap;
-  overflow: visible !important; /* Prevent clipping - !important for override */
-  max-height: none !important; /* Allow full height - !important for override */
-  display: block; /* Ensure it's displayed as block element */
-  flex: 1; /* Allow it to grow */
+  overflow: visible !important;
+  max-height: none !important;
+  display: block;
+  flex: 1;
+  min-height: 0;
 }
 
 .task-prompt,
@@ -194,11 +189,11 @@
 
 /* Specific styles for expanded state */
 .task-item.expanded .task-description-snippet {
-  display: none; /* Hide snippet when expanded */
+  display: none;
 }
 
 .task-item.expanded .task-description-full {
-  display: block; /* Show full description when expanded */
+  display: block;
 }
 
 /* Status Pill Styles */

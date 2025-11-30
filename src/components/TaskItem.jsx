@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { api } from '../utils/apiClient';
 import StatusPill from './StatusPill';
 
 const TaskItem = ({ task }) => {
   const [expanded, setExpanded] = useState(false);
-  const [isRunning, setIsRunning] = useState(false);
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -52,32 +49,12 @@ const TaskItem = ({ task }) => {
 
   // Handle run task
   const handleRunTask = async () => {
-    if (isRunning) return;
-    
-    setIsRunning(true);
-    try {
-      // Call the API to run the task
-      const result = await api.runTask("dashboard-project", task.id);
-      
-      // Dispatch the event to trigger a refresh
-      window.dispatchEvent(new CustomEvent("worldsound:tasks-updated", {
-        detail: { projectId: "dashboard-project" }
-      }));
-    } catch (error) {
-      console.error("Failed to run task:", error);
-    } finally {
-      setIsRunning(false);
-    }
+    console.log(`Run task: ${task.id}`);
+    // In a real app, this would dispatch an event or call an API
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.15, ease: "easeOut" }}
-      className={`task-item ${expanded ? 'expanded' : ''}`}
-    >
+    <div className={`task-item ${expanded ? 'expanded' : ''}`}>
       <div className="task-header" onClick={() => setExpanded(!expanded)}>
         <div className="task-status-icon">
           {getStatusIcon(task.status)}
@@ -99,48 +76,39 @@ const TaskItem = ({ task }) => {
       <div className="task-controls">
         <StatusPill status={task.status} />
         <button 
-          className={`run-task-btn ${isRunning ? 'running' : ''}`}
+          className="run-task-btn"
           onClick={handleRunTask}
-          disabled={isRunning}
           aria-label={`Run task ${task.title}`}
         >
-          {isRunning ? 'Running...' : 'Run'}
+          Run
         </button>
       </div>
       
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.15 }}
-            className="task-details"
-            style={{ overflow: 'visible' }} // Explicit style to ensure no clipping
-          >
-            <div className="task-description-full" style={{ overflow: 'visible' }}>
-              {task.description || 'No description available'}
+      {/* Expanded details section */}
+      {expanded && (
+        <div className="task-details">
+          <div className="task-description-full">
+            {task.description || 'No description available'}
+          </div>
+          {task.prompt && (
+            <div className="task-prompt">
+              <strong>Prompt:</strong> {task.prompt}
             </div>
-            {task.prompt && (
-              <div className="task-prompt">
-                <strong>Prompt:</strong> {task.prompt}
-              </div>
-            )}
-            {task.result && (
-              <div className="task-result">
-                <strong>Result:</strong> {task.result}
-              </div>
-            )}
-            <div className="task-meta">
-              <span className="task-timestamp">
-                {task.timestamp ? new Date(task.timestamp).toLocaleTimeString() : 'Just now'}
-              </span>
-              <span className="task-agent">Agent: {task.agent || 'Planner'}</span>
+          )}
+          {task.result && (
+            <div className="task-result">
+              <strong>Result:</strong> {task.result}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+          )}
+          <div className="task-meta">
+            <span className="task-timestamp">
+              {task.timestamp ? new Date(task.timestamp).toLocaleTimeString() : 'Just now'}
+            </span>
+            <span className="task-agent">Agent: {task.agent || 'Planner'}</span>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
