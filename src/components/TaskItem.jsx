@@ -76,7 +76,7 @@ const TaskItem = ({ task }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.15, ease: "easeOut" }}
-      className="task-item"
+      className={`task-item ${expanded ? 'expanded' : ''}`}
     >
       <div className="task-header" onClick={() => setExpanded(!expanded)}>
         <div className="task-status-icon">

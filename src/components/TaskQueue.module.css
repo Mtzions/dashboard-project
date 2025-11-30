@@ -141,6 +141,7 @@
   flex-shrink: 0;
   width: 100%;
   box-sizing: border-box;
+  overflow: visible; /* Ensure content isn't clipped */
 }
 
 .task-description-full {
@@ -151,6 +152,8 @@
   word-wrap: break-word;
   hyphens: auto;
   white-space: pre-wrap;
+  overflow: visible; /* Prevent clipping */
+  max-height: none; /* Allow full height */
 }
 
 .task-prompt,
@@ -181,6 +184,15 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Specific styles for expanded state */
+.task-item.expanded .task-description-snippet {
+  display: none; /* Hide snippet when expanded */
+}
+
+.task-item.expanded .task-description-full {
+  display: block; /* Show full description when expanded */
 }
 
 /* Status Pill Styles */
