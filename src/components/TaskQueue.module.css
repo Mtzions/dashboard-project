@@ -15,13 +15,12 @@
   perspective: 1000px;
   display: flex;
   flex-direction: column;
-  min-height: 70px; /* Increased minimum height */
-  margin-bottom: 12px; /* Increased spacing */
   width: 100%;
-  flex: 0 0 auto;
-  height: auto;
-  /* Ensure the container grows with content */
+  margin-bottom: 12px; /* Increased spacing */
   max-width: 100%;
+  /* Ensure content wraps properly */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .task-item:hover {
@@ -31,9 +30,10 @@
 }
 
 .task-header {
+  min-height: 52px;        /* Compact height for header */
   display: flex;
-  align-items: flex-start;
-  gap: 16px; /* Increased gap */
+  align-items: center;
+  justify-content: space-between;
   cursor: pointer;
   flex-shrink: 0;
   margin-bottom: 12px;
@@ -147,14 +147,15 @@
   border-radius: 8px;
   width: 100%;
   box-sizing: border-box;
-  overflow: visible !important;
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
+  overflow: visible;
+  display: block;
+  /* Ensure content wraps properly */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;   /* preserve line breaks, allow wrapping */
+  /* Ensure no height constraints */
   min-height: 0;
   height: auto;
-  /* Ensure the details section can grow with content */
-  animation: fadeIn 0.2s ease-out;
 }
 
 .task-description-full {
@@ -168,8 +169,6 @@
   overflow: visible !important;
   max-height: none !important;
   display: block;
-  flex: 1;
-  min-height: 0;
   width: 100%;
   /* Ensure no clipping in expanded state */
   text-align: left;
@@ -190,9 +189,8 @@
   border-radius: 6px;
   word-wrap: break-word;
   hyphens: auto;
-  /* Ensure proper spacing */
-  margin-left: 0;
-  margin-right: 0;
+  display: block;
+  width: 100%;
 }
 
 .task-meta {
@@ -212,14 +210,6 @@
   text-overflow: ellipsis;
 }
 
-/* Specific styles for expanded state */
-.task-item.expanded .task-description-snippet {
-  display: none;
-}
-
-.task-item.expanded .task-description-full {
-  display: block;
-}
 
 /* Status Pill Styles */
 .status-pill {
@@ -257,6 +247,12 @@
   background: rgba(239, 68, 68, 0.3);
   color: #fca5a5;
   border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.task-list-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 @keyframes fadeIn {

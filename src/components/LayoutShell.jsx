@@ -3,16 +3,11 @@ import WindowHeader from './WindowHeader';
 import TopTabs from './TopTabs';
 import ChatPanel from './ChatPanel';
 import AgentsSidebar from './AgentsSidebar';
-import TaskItem from './TaskItem';
 import { restoreActiveTab, persistActiveTab } from '../utils/persistence';
-import styles from './TaskQueue.module.css';
 import layoutStyles from './Layout.module.css';
 import { motion } from 'framer-motion';
 import { MODEL_PRESETS } from './ModelSelector';
 import { useProject } from '../context/ProjectStateContext';
-import WorkflowRunsPanel from './WorkflowRunsPanel';
-import ClineConsole from './ClineConsole';
-import ExecutionBoard from './ExecutionBoard';
 
 const LayoutShell = ({ projectId }) => {
   const { activeTab, setActiveTab } = useProject();
@@ -39,9 +34,9 @@ const LayoutShell = ({ projectId }) => {
       case 'chat':
         return <ChatPanel modelPreset={currentModelPreset} />;
       case 'console':
-        return <ClineConsole />;
+        return <div>Console View</div>;
       case 'workflow':
-        return <WorkflowRunsPanel />;
+        return <div>Workflow View</div>;
       default:
         return <ChatPanel modelPreset={currentModelPreset} />;
     }
@@ -91,7 +86,7 @@ const LayoutShell = ({ projectId }) => {
           {collapsed ? (
             <div className={layoutStyles.toggleButtonIcon}>▶</div>
           ) : (
-            <ExecutionBoard />
+            <div>Execution Board Content</div>
           )}
         </motion.div>
       </div>

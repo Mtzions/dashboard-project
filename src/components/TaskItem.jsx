@@ -64,9 +64,6 @@ const TaskItem = ({ task }) => {
         </div>
         <div className="task-content">
           <div className="task-title">{task.title}</div>
-          {task.description && (
-            <div className="task-description-snippet">{task.description}</div>
-          )}
         </div>
         <div className="task-actions">
           <div className={`task-expand-icon ${expanded ? 'expanded' : ''}`}>
@@ -87,19 +84,21 @@ const TaskItem = ({ task }) => {
         </button>
       </div>
       
-      {/* Expanded details section */}
+      {/* Expanded details section - make content wrap */}
       {expanded && (
-        <div className="task-details">
-          <div className="task-description-full">
-            {task.description || 'No description available'}
-          </div>
+        <div className="task-details" style={{ display: 'block' }}>
+          {task.description && (
+            <div className="task-description-full" style={{ display: 'block', width: '100%' }}>
+              {task.description}
+            </div>
+          )}
           {task.prompt && (
-            <div className="task-prompt">
+            <div className="task-prompt" style={{ display: 'block', width: '100%' }}>
               <strong>Prompt:</strong> {task.prompt}
             </div>
           )}
           {task.result && (
-            <div className="task-result">
+            <div className="task-result" style={{ display: 'block', width: '100%' }}>
               <strong>Result:</strong> {task.result}
             </div>
           )}
