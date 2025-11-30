@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { api } from '../utils/apiClient';
 import StatusPill from './StatusPill';
 
 const TaskItem = ({ task }) => {
   const [expanded, setExpanded] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -49,9 +51,23 @@ const TaskItem = ({ task }) => {
   };
 
   // Handle run task
-  const handleRunTask = () => {
-    console.log(`Run task: ${task.id}`);
-    // In a real app, this would dispatch an event or call an API
+  const handleRunTask = async () => {
+    if (isRunning) return;
+    
+    setIsRunning(true);
+    try {
+      // Call the API to run the task
+      const result = await api.runTask("dashboard-project", task.id);
+      
+      // Dispatch the event to trigger a refresh
+      window.dispatchEvent(new CustomEvent("worldsound:tasks-updated", {
+        detail: { projectId: "dashboard-project" }
+      }));
+    } catch (error) {
+      console.error("Failed to run task:", error);
+    } finally {
+      setIsRunning(false);
+    }
   };
 
   return (
@@ -73,7 +89,7 @@ const TaskItem = ({ task }) => {
           )}
         </div>
         <div className="task-actions">
-          <div className="task-expand-icon">
+          <div className={`task-expand-icon ${expanded ? 'expanded' : ''}`}>
             {expanded ? '▲' : '▼'}
           </div>
         </div>
@@ -83,11 +99,12 @@ const TaskItem = ({ task }) => {
       <div className="task-controls">
         <StatusPill status={task.status} />
         <button 
-          className="run-task-btn"
+          className={`run-task-btn ${isRunning ? 'running' : ''}`}
           onClick={handleRunTask}
+          disabled={isRunning}
           aria-label={`Run task ${task.title}`}
         >
-          Run
+          {isRunning ? 'Running...' : 'Run'}
         </button>
       </div>
       

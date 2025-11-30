@@ -187,14 +187,16 @@ const AgentsSidebar = ({ onSidebarStateChange }) => {
       {expanded && (
         <div className="sidebar-tasks">
           <h3 className="sidebar-section-title">Task Queue</h3>
-          <div className="task-list">
-            {tasks.length > 0 ? (
-              tasks.map((task) => (
-                <TaskItem key={task.id} task={task} />
-              ))
-            ) : (
-              <div className="no-tasks">No tasks available</div>
-            )}
+          <div className="task-list-wrapper">
+            <div className="task-list">
+              {tasks.length > 0 ? (
+                tasks.map((task) => (
+                  <TaskItem key={task.id} task={task} />
+                ))
+              ) : (
+                <div className="no-tasks">No tasks available</div>
+              )}
+            </div>
           </div>
           <div className="sidebar-footer">
             <button 
