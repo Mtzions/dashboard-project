@@ -1,4 +1,5 @@
 import React from 'react';
+import './TopTabs.css';
 
 const TopTabs = ({ activeTab, setActiveTab }) => {
   const tabs = [

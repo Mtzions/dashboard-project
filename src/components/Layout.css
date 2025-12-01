@@ -1,0 +1,138 @@
+/* Global viewport handling */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+/* Default: allow scrolling for small screens */
+body {
+  overflow-y: auto;
+}
+
+/* Desktop and large laptops: lock to viewport and disable page scroll */
+@media (min-width: 1024px) {
+  body {
+    overflow: hidden;
+  }
+
+  .dashboard-container {
+    height: 100dvh;
+    max-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .app-main {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
+/* Tablet portrait and mobile: stacked layout */
+@media (max-width: 1023px) {
+  .dashboard-container {
+    min-height: 100vh;
+    height: auto;
+    overflow: visible;
+  }
+
+  .app-main {
+    min-height: 0;
+    height: auto;
+    overflow: visible;
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    max-height: 30vh;
+  }
+  
+  .main-content {
+    width: 100%;
+  }
+}
+
+/* Sidebar (Task Queue) */
+.sidebar {
+  width: 30%;
+  min-width: 300px;
+  max-width: 500px;
+  flex-shrink: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(25, 25, 30, 0.9);
+  padding: 16px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* Main content area */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Tabbed content area */
+.tabbed-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Toolbar area */
+.toolbar {
+  flex-shrink: 0;
+  height: 40px;
+}
+
+/* Content area */
+.content-area {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Mobile navigation */
+.mobile-nav {
+  display: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .mobile-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(30, 30, 35, 0.95);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 100;
+  }
+  
+  .mobile-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 0;
+    color: #a0a0a0;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  
+  .mobile-nav-item.active {
+    color: #4ade80;
+  }
+}

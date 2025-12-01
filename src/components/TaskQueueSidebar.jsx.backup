@@ -1,0 +1,153 @@
+import React, { useState, useEffect } from 'react';
+import { api } from '../utils/apiClient';
+import './TaskQueue.module.css';
+
+const TaskQueueSidebar = ({ projectId = "dashboard-project" }) => {
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Load tasks function
+  async function loadTasks() {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await api.getTasks(projectId);
+      // Extract tasks array from the response: { projectId, tasks: [...] }
+      const list = Array.isArray(res.tasks) ? res.tasks : [];
+      setTasks(list);
+    } catch (err) {
+      console.error("[TaskQueueSidebar] Failed to load tasks:", err);
+      setError(err.message || String(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Fetch tasks when component mounts or projectId changes
+  useEffect(() => {
+    loadTasks();
+  }, [projectId]);
+
+  // Set up event listener for task updates
+  useEffect(() => {
+    function handleTasksUpdated(e) {
+      if (!e.detail || e.detail.projectId !== projectId) return;
+      loadTasks();
+    }
+    
+    window.addEventListener("worldsound:tasks-updated", handleTasksUpdated);
+    return () => {
+      window.removeEventListener("worldsound:tasks-updated", handleTasksUpdated);
+    };
+  }, [projectId]);
+
+  // Normalize status safely
+  const normalizeStatus = (status) => {
+    return (status || "todo").toLowerCase();
+  };
+
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  // Render task card
+  const renderTaskCard = (task) => {
+    // Safely handle missing fields
+    const status = normalizeStatus(task.status);
+    const title = task.title || "Untitled task";
+    const priority = task.priority;
+    const type = task.type;
+    const agentHint = task.agentHint || task.agent;
+    const createdAt = task.createdAt;
+    const description = task.description || "";
+    
+    return (
+      <div key={task.id || title} className="task-card">
+        <div className="task-card-header">
+          <h4 className="task-card-title">{title}</h4>
+          <span className={`task-card-status-pill status-${status}`}>
+            {status.toUpperCase()}
+          </span>
+        </div>
+
+        <div className="task-card-meta">
+          {typeof priority === "number" && (
+            <span className="task-meta-chip">P{priority}</span>
+          )}
+          {type && (
+            <span className="task-meta-chip">{type}</span>
+          )}
+          {agentHint && (
+            <span className="task-meta-chip">Agent: {agentHint}</span>
+          )}
+          {createdAt && (
+            <span className="task-meta-chip">
+              {formatDate(createdAt)}
+            </span>
+          )}
+        </div>
+
+        {description && (
+          <p className="task-card-description">{description}</p>
+        )}
+      </div>
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="task-queue-panel">
+        <div className="task-queue-header">
+          <h3 className="task-queue-title">Task Queue</h3>
+          <span className="task-queue-count">Loading...</span>
+        </div>
+        <div className="task-queue-body">
+          <div className="loading-indicator">Loading tasks...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="task-queue-panel">
+        <div className="task-queue-header">
+          <h3 className="task-queue-title">Task Queue</h3>
+          <span className="task-queue-count">Error</span>
+        </div>
+        <div className="task-queue-body">
+          <div className="error-message">{error}</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="task-queue-panel">
+      <div className="task-queue-header">
+        <h3 className="task-queue-title">Task Queue</h3>
+        <span className="task-queue-count">{tasks.length} {tasks.length === 1 ? 'task' : 'tasks'}</span>
+      </div>
+      <div className="task-queue-body">
+        <div className="task-list">
+          {tasks.length > 0 ? (
+            tasks.map(renderTaskCard)
+          ) : (
+            <div className="empty-state">No tasks in queue</div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default TaskQueueSidebar;

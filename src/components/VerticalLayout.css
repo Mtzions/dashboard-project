@@ -1,0 +1,103 @@
+/* Clean vertical layout for dashboard */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* Main content area that stacks vertically */
+.vertical-content-stack {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  height: calc(100vh - 40px); /* Account for toolbar height */
+  margin: 8px;
+}
+
+/* Sidebar container - positioned below toolbar */
+.sidebar-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex-shrink: 0;
+  margin: 0 0 8px 0;
+  /* Let the sidebar size itself naturally */
+  height: auto;
+}
+
+/* Chat container - positioned below sidebar and fills remaining space */
+.chat-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 0;
+}
+
+.chat-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.chat-container-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  min-height: 0;
+}
+
+.center-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 16px;
+  min-width: 0;
+  min-height: 0;
+}
+
+.chat-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(30, 30, 35, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+  height: 40px;
+  margin: 0;
+  border-radius: 8px;
+}
+
+/* Responsive behavior */
+@media (max-width: 768px) {
+  .vertical-content-stack {
+    height: auto;
+    margin: 8px;
+  }
+  
+  .sidebar-wrapper {
+    width: 100%;
+    height: auto;
+    margin: 0 0 8px 0;
+    padding: 16px;
+  }
+  
+  .chat-wrapper {
+    width: 100%;
+    height: auto;
+    margin: 0;
+  }
+  
+  .chat-toolbar {
+    margin: 0;
+  }
+}

@@ -3,7 +3,7 @@ import { api } from '../utils/apiClient';
 import StatusPill from './StatusPill';
 import TaskItem from './TaskItem';
 
-const TaskQueueSidebar = ({ projectId }) => {
+const TaskQueueSidebar = ({ projectId = "dashboard-project" }) => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -66,74 +66,75 @@ const TaskQueueSidebar = ({ projectId }) => {
     setExpandedTaskId(expandedTaskId === taskId ? null : taskId);
   };
 
-  // Get status icon for task
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case 'planning':
-        return (
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
-            <path d="M12 6V12L16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        );
-      case 'queued':
-        return (
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
-            <path d="M8 12H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-        );
-      case 'in progress':
-        return (
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
-            <path d="M12 6V12L16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        );
-      case 'done':
-        return (
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
-            <path d="M8 12L11 15L16 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        );
-      case 'error':
-        return (
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
-            <path d="M12 8V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            <path d="M12 16H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-        );
-      default:
-        return null;
-    }
+
+  // Calculate task statistics
+  const getTaskStats = () => {
+    const total = tasks.length;
+    const queued = tasks.filter(t => t.status === 'queued').length;
+    const inProgress = tasks.filter(t => t.status === 'in progress').length;
+    const done = tasks.filter(t => t.status === 'done').length;
+    const error = tasks.filter(t => t.status === 'error').length;
+    
+    return { total, queued, inProgress, done, error };
   };
+
+  const stats = getTaskStats();
+  
+  // Only show first 3 tasks
+  const displayedTasks = tasks.slice(0, 3);
 
   return (
     <div className="sidebar-tasks">
-      <h3 className="sidebar-section-title">Task Queue</h3>
-      <div className="task-list-wrapper" style={{ display: 'flex', flexDirection: 'column' }}>
+      <h3 className="sidebar-section-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        Task Queue
+      </h3>
+      
+      {/* Task Stats */}
+      <div className="task-stats">
+        <span>{stats.total} tasks</span>
+        <span>{stats.queued} queued</span>
+        <span>{stats.inProgress} in progress</span>
+      </div>
+      
+      <div className="task-list-wrapper">
         {loading ? (
           <div className="loading-indicator">Loading tasks...</div>
         ) : error ? (
           <div className="error-message">Error loading tasks: {error}</div>
-        ) : tasks.length > 0 ? (
+        ) : displayedTasks.length > 0 ? (
           <div className="task-list">
-            {/* Show all tasks */}
-            {tasks.map((task) => (
+            {/* Show only first 5 tasks */}
+            {displayedTasks.map((task) => (
               <TaskItem key={task.id} task={task} />
             ))}
+            {tasks.length > 3 && (
+              <div className="task-limit-indicator">
+                Showing 3 of {tasks.length} tasks
+              </div>
+            )}
           </div>
         ) : (
-          <div className="no-tasks">No tasks available</div>
+          <div className="empty-state">
+            <svg className="empty-state-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <div className="empty-state-title">No tasks yet</div>
+            <div className="empty-state-description">Your task queue is empty. Start by creating a new task or waiting for tasks to be generated.</div>
+          </div>
         )}
       </div>
+      
       <div className="sidebar-footer">
         <button 
           className="run-all-pending-btn"
           onClick={handleRunAllPending}
         >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4V20M12 4L16 8M12 4L8 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
           Run All Pending Tasks
         </button>
       </div>

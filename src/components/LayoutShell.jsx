@@ -2,28 +2,25 @@ import React, { useState, useEffect } from 'react';
 import WindowHeader from './WindowHeader';
 import TopTabs from './TopTabs';
 import ChatPanel from './ChatPanel';
-import AgentsSidebar from './AgentsSidebar';
+import TaskQueueSidebar from './TaskQueueSidebar';
 import { restoreActiveTab, persistActiveTab } from '../utils/persistence';
-import layoutStyles from './Layout.module.css';
-import { motion } from 'framer-motion';
+import './Layout.css'; // Simple global CSS for layout
+import './TaskQueueSidebar.css'; // Task queue specific styles
+import './WindowHeader.css'; // Window header specific styles
+import './ChatPanel.css'; // Chat panel specific styles
+import './TopTabs.css'; // Top tabs specific styles
 import { MODEL_PRESETS } from './ModelSelector';
 import { useProject } from '../context/ProjectStateContext';
 
 const LayoutShell = ({ projectId }) => {
   const { activeTab, setActiveTab } = useProject();
   const [showMobileNav, setShowMobileNav] = useState(false);
-  const [sidebarExpanded, setSidebarExpanded] = useState(true);
-  const [collapsed, setCollapsed] = useState(false);
   const [currentModelPreset, setCurrentModelPreset] = useState(MODEL_PRESETS[0]);
 
   // Persist active tab
   React.useEffect(() => {
     persistActiveTab(activeTab);
   }, [activeTab]);
-
-  const toggleSidebar = () => {
-    setCollapsed(prev => !prev);
-  };
 
   const handleModelPresetChange = (preset) => {
     setCurrentModelPreset(preset);
@@ -46,49 +43,24 @@ const LayoutShell = ({ projectId }) => {
     <div className="dashboard-container">
       <WindowHeader onModelPresetChange={handleModelPresetChange} />
       
-      {/* Main layout using flexbox */}
-      <div className={layoutStyles.mainLayout}>
-        {/* Collapsible Agents Sidebar */}
-        <motion.div 
-          className={`${layoutStyles.sidebar} ${collapsed ? layoutStyles.sidebarCollapsed : layoutStyles.sidebarExpanded}`}
-          animate={{ width: collapsed ? 40 : 280 }}
-          transition={{ duration: 0.3 }}
-        >
-          {collapsed ? (
-            <div className={layoutStyles.toggleButtonIcon}>◀</div>
-          ) : (
-            <AgentsSidebar onSidebarStateChange={setSidebarExpanded} />
-          )}
-        </motion.div>
+      {/* New clean layout with single Task Queue sidebar */}
+      <div className="app-main">
+        {/* Single Task Queue Sidebar */}
+        <div className="sidebar">
+          <TaskQueueSidebar projectId={projectId} />
+        </div>
 
-        {/* Chat Component - Takes full available space */}
-        <div className={layoutStyles.chatContainer}>
-          <div className={layoutStyles.chatContainerInner}>
-            <div className={layoutStyles.centerColumn}>
-              {/* Toolbar with toggle button above chat */}
-              <div className={layoutStyles.chatToolbar}>
-                <div className={layoutStyles.toggleButton} onClick={toggleSidebar}>
-                  <span className={layoutStyles.toggleButtonIcon}>{collapsed ? '▶' : '◀'}</span>
-                </div>
-                <TopTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-              </div>
+        {/* Main Content Area */}
+        <div className="main-content">
+          <div className="tabbed-content">
+            <div className="toolbar">
+              <TopTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+            </div>
+            <div className="content-area">
               {renderActiveTab()}
             </div>
           </div>
         </div>
-
-        {/* Collapsible Task Queue + AI Workflow Sidebars */}
-        <motion.div 
-          className={`${layoutStyles.sidebar} ${collapsed ? layoutStyles.sidebarCollapsed : layoutStyles.sidebarExpanded}`}
-          animate={{ width: collapsed ? 40 : 280 }}
-          transition={{ duration: 0.3 }}
-        >
-          {collapsed ? (
-            <div className={layoutStyles.toggleButtonIcon}>▶</div>
-          ) : (
-            <div>Execution Board Content</div>
-          )}
-        </motion.div>
       </div>
       
       {/* Mobile Navigation */}

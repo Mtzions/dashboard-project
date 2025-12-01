@@ -1,3 +1,12 @@
+/* Chat panel layout */
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+}
+
 /* Custom scrollbar for messages container */
 .messages-container {
   flex: 1;
@@ -7,6 +16,7 @@
   flex-direction: column;
   gap: 8px;
   padding: 16px;
+  height: 100%;
 }
 
 .messages-container::-webkit-scrollbar {
@@ -26,126 +36,36 @@
   background-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Agent message block styling */
-.agent-message-block {
-  align-self: stretch;
-  max-width: 100%;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  margin-bottom: 8px;
-}
-
-.agent-message-block:last-child {
-  border-bottom: none;
-}
-
-.agent-markdown {
-  font-size: 14px;
-  line-height: 1.5;
-  color: #e5e7eb;
-}
-
-.agent-markdown h1,
-.agent-markdown h2,
-.agent-markdown h3 {
-  margin: 8px 0 4px;
-  font-weight: 600;
-}
-
-.agent-markdown h1 { font-size: 18px; }
-.agent-markdown h2 { font-size: 16px; }
-.agent-markdown h3 { font-size: 15px; }
-
-.agent-markdown p {
-  margin: 4px 0;
-}
-
-.agent-markdown ul,
-.agent-markdown ol {
-  margin: 4px 0 4px 20px;
-  padding-left: 16px;
-}
-
-.agent-markdown code {
-  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-  font-size: 13px;
-  background: rgba(15, 23, 42, 0.9);
-  padding: 2px 4px;
-  border-radius: 4px;
-}
-
-.agent-markdown pre {
-  background: rgba(15, 23, 42, 0.95);
-  border-radius: 8px;
-  padding: 10px 12px;
-  overflow-x: auto;
-  border: 1px solid rgba(148, 163, 184, 0.4);
-  margin: 8px 0;
-}
-
-.agent-markdown pre code {
-  background: transparent;
-  padding: 0;
-}
-
-.agent-markdown blockquote {
-  border-left: 3px solid rgba(148, 163, 184, 0.7);
-  margin: 4px 0;
-  padding-left: 10px;
-  color: #9ca3af;
-  font-style: italic;
-}
-
-.agent-timestamp {
-  font-size: 11px;
-  color: #6b7280;
-  margin-top: 2px;
-}
-
-.thinking-block .typing-indicator {
-  margin-top: 4px;
-}
-
-/* Chat panel layout */
-.chat-panel {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-}
-
-/* Ensure message bubbles take full width */
+/* Message styling */
 .message-bubble {
-  width: 100%; /* Make message bubbles full width */
-  max-width: 100%; /* Ensure they don't exceed container */
+  width: 100%;
+  max-width: 100%;
 }
 
-/* Ensure message content takes full width */
 .message-content {
-  width: 100%; /* Full width content */
+  width: 100%;
 }
 
-/* Ensure quick reply chips container takes full width */
-.quick-reply-chips {
-  width: 100%; /* Full width for chips */
-  justify-content: flex-start; /* Align to left */
-}
-
-/* Ensure message input form takes full width */
+/* Input form */
 .message-input-form {
-  width: 100%; /* Full width form */
-  max-width: 100%; /* Prevent overflow */
+  width: 100%;
+  max-width: 100%;
+  flex-shrink: 0;
 }
 
-/* Ensure message input takes full width */
 .message-input {
-  width: 100%; /* Full width input */
-  max-width: 100%; /* Prevent overflow */
+  width: 100%;
+  max-width: 100%;
 }
 
-/* Ensure send button maintains proper positioning */
 .send-button {
-  flex-shrink: 0; /* Prevent shrinking */
+  flex-shrink: 0;
+}
+
+/* Quick reply chips */
+.quick-reply-chips {
+  width: 100%;
+  justify-content: flex-start;
 }
 
 /* Typing indicator */
@@ -174,247 +94,4 @@
 @keyframes bounce {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-3px); }
-}
-
-/* Message input focus states */
-.message-input:focus {
-  border-color: rgba(74, 202, 128, 0.5);
-  box-shadow: 0 0 0 2px rgba(74, 202, 128, 0.2);
-}
-
-/* Send button focus states */
-.send-button:focus {
-  outline: 2px solid rgba(74, 202, 128, 0.5);
-  outline-offset: 2px;
-}
-
-/* AGENT MESSAGE formatting */
-.agent-message-block {
-  width: 100%;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-
-.agent-markdown {
-  font-size: 15px;
-  color: #e7e7e7;
-  line-height: 1.55;
-}
-
-.agent-markdown h1, .agent-markdown h2, .agent-markdown h3 {
-  font-weight: 600;
-  margin: 12px 0 6px;
-}
-
-.agent-markdown ul, .agent-markdown ol {
-  padding-left: 20px;
-  margin: 4px 0 12px;
-}
-
-.agent-markdown code {
-  background: rgba(255,255,255,0.1);
-  padding: 2px 6px;
-  border-radius: 5px;
-  font-size: 13px;
-}
-
-.agent-markdown pre code {
-  background: transparent;
-  padding: 0;
-  font-size: 13px;
-}
-
-.agent-markdown hr {
-  border: none;
-  border-top: 1px solid rgba(255,255,255,0.12);
-  margin: 16px 0;
-}
-
-.agent-timestamp {
-  font-size: 11px;
-  color: rgba(200,200,200,0.5);
-  margin-top: 4px;
-  text-align: left;
-}
-
-/* USER MESSAGE improvements */
-.message-bubble.user {
-  background: rgba(60,60,75,0.92);
-  box-shadow:
-    0 2px 10px rgba(0,0,0,0.25),
-    0 0 0 1px rgba(100,100,120,0.25) inset;
-  animation: bubbleIn 0.25s ease forwards;
-}
-
-@keyframes bubbleIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-
-/* Enhanced message styling */
-.message-bubble.agent {
-  background: rgba(40, 40, 45, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-top-left-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.message-bubble.user {
-  background: rgba(60, 60, 70, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-top-right-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Message bubble hover effects */
-.message-bubble:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.message-bubble.agent:hover {
-  background: rgba(45, 45, 50, 0.9);
-}
-
-.message-bubble.user:hover {
-  background: rgba(65, 65, 75, 0.9);
-}
-
-/* Input form enhancements */
-.message-input-form {
-  display: flex;
-  padding: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  gap: 8px;
-  background: rgba(25, 25, 30, 0.7);
-  border-radius: 0 0 12px 12px;
-}
-
-.message-input {
-  flex: 1;
-  padding: 10px 16px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(30, 30, 35, 0.8);
-  color: #e0e0e0;
-  font-size: 14px;
-  outline: none;
-  transition: all 0.2s ease;
-  position: relative;
-}
-
-.message-input:focus {
-  border-color: rgba(74, 202, 128, 0.5);
-}
-
-/* Send button enhancements */
-.send-button {
-  padding: 8px 16px;
-  border-radius: 20px;
-  border: none;
-  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(74, 202, 128, 0.3);
-  min-width: 60px;
-}
-
-.send-button:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(74, 202, 128, 0.4);
-}
-
-.send-button:active {
-  transform: translateY(0);
-}
-
-/* Focus styles for accessibility */
-.message-input:focus {
-  box-shadow: 0 0 0 2px rgba(74, 202, 128, 0.3);
-}
-
-.send-button:focus {
-  outline: 2px solid rgba(74, 202, 128, 0.5);
-  outline-offset: 2px;
-}
-
-/* Quick reply chips container */
-.quick-reply-chips {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-  padding: 8px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.quick-reply-chip {
-  padding: 6px 12px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(30, 30, 35, 0.5);
-  color: #a0a0a0;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.quick-reply-chip:hover {
-  background: rgba(50, 50, 55, 0.7);
-  color: #e0e0e0;
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-}
-
-.quick-reply-chip:active {
-  transform: translateY(0);
-}
-
-/* Focus styles for accessibility */
-.quick-reply-chip:focus {
-  outline: 2px solid rgba(74, 202, 128, 0.5);
-  outline-offset: 2px;
-}
-
-/* New markdown styling for agent messages */
-
-/* Plan button styling */
-.plan-button {
-  padding: 8px 16px;
-  border-radius: 20px;
-  border: none;
-  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
-  min-width: 60px;
-}
-
-.plan-button:hover:not(:disabled) {
-  opacity: 0.9;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-}
-
-.plan-button:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.plan-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Focus styles for accessibility */
-.plan-button:focus {
-  outline: 2px solid rgba(59, 130, 246, 0.5);
-  outline-offset: 2px;
 }
